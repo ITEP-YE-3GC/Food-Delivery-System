@@ -9,10 +9,10 @@ namespace OrderService.Entities.Model.DTOs
         public int CustomerID { get; set; }
         public int DriverID { get; set; }
         public int AddressID { get; set; }
-
         public int PaymentID { get; set; }
-        //
-        //
+       //
+       //
+       //
        
     }
 }
