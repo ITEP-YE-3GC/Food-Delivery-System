@@ -12,6 +12,7 @@ namespace OrderService.Entities.Model.DTOs
 
         public int PaymentID { get; set; }
         //
+        //
        
     }
 }
