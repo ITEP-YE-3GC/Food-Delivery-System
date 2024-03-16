@@ -12,8 +12,8 @@ using OrderService.Entities;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240312142529_f2")]
-    partial class f2
+    [Migration("20240316015035_InitDB")]
+    partial class InitDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -59,6 +59,9 @@ namespace OrderService.Migrations
                     b.Property<long>("OrderID")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("OrdersOrderID")
+                        .HasColumnType("bigint");
+
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
@@ -70,7 +73,7 @@ namespace OrderService.Migrations
 
                     b.HasKey("Seq");
 
-                    b.HasIndex("OrderID");
+                    b.HasIndex("OrdersOrderID");
 
                     b.ToTable("orderDetails");
                 });
@@ -149,11 +152,8 @@ namespace OrderService.Migrations
             modelBuilder.Entity("OrderService.Entities.Model.Orders", b =>
                 {
                     b.Property<long>("OrderID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("OrderID");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OrderID"));
 
                     b.Property<int>("AddressID")
                         .HasColumnType("int");
@@ -216,13 +216,9 @@ namespace OrderService.Migrations
 
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
                 {
-                    b.HasOne("OrderService.Entities.Model.Orders", "Order")
+                    b.HasOne("OrderService.Entities.Model.Orders", null)
                         .WithMany("OrderDetails")
-                        .HasForeignKey("OrderID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
+                        .HasForeignKey("OrdersOrderID");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.Orders", b =>

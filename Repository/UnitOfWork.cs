@@ -1,5 +1,6 @@
 ﻿using OrderService.Contracts;
 using OrderService.Entities;
+using OrderService.Entities.Model;
 
 namespace OrderService.Repository
 {
@@ -9,6 +10,19 @@ namespace OrderService.Repository
         private IUserRepository _user;
         private IOrdersRepository _order;
         private IOrderDetailsRepository _orderDetails;
+        IGenericRepository<Carts> _Carts;
+        public IGenericRepository<Carts> Carts
+        {
+            get
+            {
+                if (_Carts == null)
+                {
+                    _Carts = new GenericRepository<Carts>(_context);
+                }
+                return _Carts;
+            }
+
+        }
         public IUserRepository User
         {
             get

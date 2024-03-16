@@ -149,11 +149,8 @@ namespace OrderService.Migrations
             modelBuilder.Entity("OrderService.Entities.Model.Orders", b =>
                 {
                     b.Property<long>("OrderID")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint")
                         .HasColumnName("OrderID");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("OrderID"));
 
                     b.Property<int>("AddressID")
                         .HasColumnType("int");

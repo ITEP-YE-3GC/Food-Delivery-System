@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OrderService.Migrations
 {
     /// <inheritdoc />
-    public partial class f : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,8 +32,7 @@ namespace OrderService.Migrations
                 name: "orders",
                 columns: table => new
                 {
-                    OrderID = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderID = table.Column<long>(type: "bigint", nullable: false),
                     CustomerID = table.Column<int>(type: "int", nullable: false),
                     DriverID = table.Column<int>(type: "int", nullable: false),
                     AddressID = table.Column<int>(type: "int", nullable: false),
@@ -103,17 +102,17 @@ namespace OrderService.Migrations
                     ProductID = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    OrderID = table.Column<long>(type: "bigint", nullable: false)
+                    OrderID = table.Column<long>(type: "bigint", nullable: false),
+                    OrdersOrderID = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_orderDetails", x => x.Seq);
                     table.ForeignKey(
-                        name: "FK_orderDetails_orders_OrderID",
-                        column: x => x.OrderID,
+                        name: "FK_orderDetails_orders_OrdersOrderID",
+                        column: x => x.OrdersOrderID,
                         principalTable: "orders",
-                        principalColumn: "OrderID",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "OrderID");
                 });
 
             migrationBuilder.InsertData(
@@ -129,9 +128,9 @@ namespace OrderService.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_orderDetails_OrderID",
+                name: "IX_orderDetails_OrdersOrderID",
                 table: "orderDetails",
-                column: "OrderID");
+                column: "OrdersOrderID");
         }
 
         /// <inheritdoc />
