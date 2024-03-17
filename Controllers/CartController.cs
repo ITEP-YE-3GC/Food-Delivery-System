@@ -36,7 +36,7 @@ namespace OrderService.Controllers
        
 
        
-        [HttpPut ]
+        [HttpPut ("{id}") ]
         public async Task<IActionResult> EditItem(int id, Orders order)
         {
             if (id != order.OrderID)
