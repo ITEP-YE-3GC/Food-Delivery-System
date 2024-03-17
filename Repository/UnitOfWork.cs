@@ -9,6 +9,8 @@ namespace OrderService.Repository
         private IUserRepository _user;
         private IOrdersRepository _order;
         private IOrderDetailsRepository _orderDetails;
+        private ICartRepository _cartRepository;
+
         public IUserRepository User
         {
             get
@@ -44,6 +46,19 @@ namespace OrderService.Repository
             }
         }
 
+        public ICartRepository Cart
+        {
+            get
+            {
+                if (_cartRepository == null)
+                {
+                    _cartRepository = new CartRepository(_context);
+                }
+                return _cartRepository;
+            }
+        }
+
+        // public ICartRepository Cart => throw new NotImplementedException();
 
 
         public UnitOfWork(ApplicationContext context)
@@ -55,6 +70,7 @@ namespace OrderService.Repository
         {
             return _context.SaveChanges();
         }
+
         public void Dispose()
         {
             _context.Dispose();

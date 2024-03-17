@@ -9,11 +9,14 @@ namespace OrderService.Entities.Seeds
         public void Configure(EntityTypeBuilder<OrderStatus> builder)
         {
             builder.HasData(
-                new OrderStatus { StatusID = 1, Name = "Status 1" },
-                new OrderStatus { StatusID = 2, Name = "Status 2" },
-                new OrderStatus { StatusID = 3, Name = "Status 3" },
-                new OrderStatus { StatusID = 4, Name = "Status 4" },
-                new OrderStatus { StatusID = 5, Name = "Status 5" }
+                // Customer 
+                new OrderStatus { StatusID = 1, Name = "Submitted" },
+                // Restaurant
+                new OrderStatus { StatusID = 2, Name = "Received" },
+                // Courier / Driver
+                new OrderStatus { StatusID = 3, Name = " Picked up" },
+                new OrderStatus { StatusID = 4, Name = "Onway" },
+                new OrderStatus { StatusID = 5, Name = "Delivered" }
             );
         }
     }

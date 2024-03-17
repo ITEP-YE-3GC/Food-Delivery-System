@@ -9,11 +9,20 @@ using Microsoft.AspNetCore.Hosting;
 var builder = WebApplication.CreateBuilder(args);
 
 
+//builder.Services.AddDbContext<ApplicationContext>(
+//    options =>
+//options.UseSqlServer(builder.Configuration.GetConnectionString("OrderServiceConPQL") ??
+//throw new InvalidOperationException("Connections string: OrderServiceCon was not found")));
+
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("OrderServiceCon") ??
+    options.UseNpgsql(builder.Configuration.GetConnectionString("OrderServiceConPQL") ??
 throw new InvalidOperationException("Connections string: OrderServiceCon was not found")));
 
+/// ==========================
+/// Register AutoMapper
+/// ==========================
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
 // Add services to the container.
@@ -26,7 +35,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureUnitOfWork();
 
-
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<ILoggerManager, LoggerManager>();
 
