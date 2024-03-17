@@ -1,8 +1,13 @@
 {
   "ExpandedNodes": [
     "",
+    "\\.github",
+    "\\Contracts",
+    "\\Controllers",
+    "\\Entities",
     "\\Services",
     "\\Utilities"
   ],
+  "SelectedNode": "\\Migrations",
   "PreviewInSolutionExplorer": false
 }
