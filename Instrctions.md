@@ -1,4 +1,4 @@
-## Database Setup Instructions
+## Database Setup Instructions shoice database [SQL Server or PostgreSQL]
 
 ### SQL Server
 
@@ -17,18 +17,6 @@
     ```csharp
     builder.Services.AddDbContext<YourDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
-    ```
-
-4. **Add Migration:** Navigate to your project directory and use the Entity Framework Core tools to add a migration:
-
-    ```
-    dotnet ef migrations add InitialCreate
-    ```
-
-5. **Update Database:** Apply the migration to update the database schema:
-
-    ```
-    dotnet ef database update
     ```
 
 ### PostgreSQL
@@ -50,6 +38,21 @@
         options.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSqlConnection")));
     ```
 
-4. **Add Migration:** Use the same command as for SQL Server to add a migration for PostgreSQL.
+### Database Maigration
 
-5. **Update Database:** Apply the migration to update the PostgreSQL database schema with the same `dotnet ef database update` command.
+1. **Install EF Core Tools:** Make sure you have the Entity Framework Core Tools installed. You can install them globally with the following command:
+
+    ```
+    dotnet ef migrations add InitialCreate
+    ```
+
+2. **Add Migration:** Navigate to your project directory and use the Entity Framework Core tools to add a migration:
+
+    ```
+    dotnet ef migrations add InitialCreate
+    ```
+
+3. **Update Database:** Apply the migration to update the database schema:
+
+    ```
+    dotnet ef database update
