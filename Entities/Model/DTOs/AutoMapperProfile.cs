@@ -2,9 +2,9 @@
 
 namespace OrderService.Entities.Model.DTOs
 {
-    public class AutoMapperOrders:Profile
+    public class AutoMapperProfile : Profile
     {
-        public AutoMapperOrders()
+        public AutoMapperProfile()
         {
             CreateMap<OrderAddDTO,Orders>();
         }
