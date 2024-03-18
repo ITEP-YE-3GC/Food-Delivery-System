@@ -10,8 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
+// builder.Services.AddDbContext<ApplicationContext>(options =>
+// options.UseSqlServer(builder.Configuration.GetConnectionString("OrderServiceCon") ??
+// throw new InvalidOperationException("Connections string: OrderServiceCon was not found")));
+
 builder.Services.AddDbContext<ApplicationContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("OrderServiceCon") ??
+    options.UseNpgsql(builder.Configuration.GetConnectionString("OrderServiceConPQL") ??
 throw new InvalidOperationException("Connections string: OrderServiceCon was not found")));
 
 
