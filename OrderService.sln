@@ -5,6 +5,10 @@ VisualStudioVersion = 17.9.34616.47
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OrderService", "OrderService.csproj", "{953CED80-CC9E-481D-B536-DC6CF6371C80}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{0314B318-F8EA-45AB-8E1D-2A48EAF03FF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderServiceAPI.Test", "..\OrderServiceAPI.Test\OrderServiceAPI.Test.csproj", "{DD03FA7E-C64E-4A49-9CCB-39AA2BA021AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +19,16 @@ Global
 		{953CED80-CC9E-481D-B536-DC6CF6371C80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{953CED80-CC9E-481D-B536-DC6CF6371C80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{953CED80-CC9E-481D-B536-DC6CF6371C80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD03FA7E-C64E-4A49-9CCB-39AA2BA021AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD03FA7E-C64E-4A49-9CCB-39AA2BA021AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD03FA7E-C64E-4A49-9CCB-39AA2BA021AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD03FA7E-C64E-4A49-9CCB-39AA2BA021AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DD03FA7E-C64E-4A49-9CCB-39AA2BA021AF} = {0314B318-F8EA-45AB-8E1D-2A48EAF03FF7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {877F1BB3-9769-4A30-B3C1-81D94974B5D9}

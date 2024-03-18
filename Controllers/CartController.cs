@@ -1,23 +1,15 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Contracts;
-using OrderService.Controllers.Base;
-using OrderService.Entities.Model;
-using OrderService.Entities.Model.DTOs;
-using static OrderService.Entities.Model.DTOs.CartAutoMapper;
-
+﻿
 namespace OrderService.Controllers
 {
     public class CartController : BaseController
     {
-        private readonly IUnitOfWork _uniftOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private ILoggerManager _logger;
         private readonly IMapper _mapper;
 
         public CartController(IUnitOfWork uniftOfWork, ILoggerManager logger)
         {
-            _uniftOfWork = uniftOfWork;
+            _unitOfWork = uniftOfWork;
             _logger = logger;
         }
 
@@ -31,11 +23,11 @@ namespace OrderService.Controllers
         [HttpGet("{customerId}")]
         public async Task<ActionResult<User>> GetCart(int customerId)
         {
-            if (_uniftOfWork.Cart == null)
+            if (_unitOfWork.Cart == null)
             {
                 return NotFound();
             }
-            var cartItems = _uniftOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
+            var cartItems = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
 
             if (cartItems == null)
             {
@@ -48,11 +40,11 @@ namespace OrderService.Controllers
         [HttpGet("{customerId}/{productId}")]
         public async Task<ActionResult<Cart>> GetCartItem(int customerId, int productId)
         {
-            if (_uniftOfWork.Cart == null)
+            if (_unitOfWork.Cart == null)
             {
                 return NotFound();
             }
-            var item = _uniftOfWork.Cart.FindCartItem(customerId, productId);
+            var item = _unitOfWork.Cart.FindCartItem(customerId, productId);
 
             if (item == null)
             {
@@ -64,29 +56,31 @@ namespace OrderService.Controllers
 
         // PUT: api/Cart/5
         [HttpPut("{customerId}/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PutCartItem(int customerId, int productId, [FromBody] CartDTO cart)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ApiResponse(400, "Validation failed for the provided cart data."));
             }
 
-            var item = _uniftOfWork.Cart.FindCartItem(customerId, productId);
+            var item = _unitOfWork.Cart.FindCartItem(customerId, productId);
             if (item == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {productId} not found."));
             }
-
-            _mapper.Map(cart, item);
 
             try
             {
-                _uniftOfWork.Complete();
+                _unitOfWork.Complete();
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogError($"Concurrency error: {ex.Message}");
-                return StatusCode(StatusCodes.Status409Conflict);
+                _logger.LogError($"Concurrency error while updating cart item for customer {customerId} and product {productId}: {ex.Message}");
+                return Conflict(new ApiResponse(409, "A conflict occurred while updating the cart item. Please retry the operation."));
             }
 
             return NoContent();
@@ -97,12 +91,12 @@ namespace OrderService.Controllers
         [HttpPost]
         public async Task<ActionResult<Cart>> PostCartItem([FromBody] Cart cart)
         {
-            if (_uniftOfWork.Cart == null)
+            if (_unitOfWork.Cart == null)
             {
                 return Problem("Entity set 'ApplicationContext.Carts' is null.");
             }
-            _uniftOfWork.Cart.Create(cart);
-            _uniftOfWork.Complete();
+            _unitOfWork.Cart.Create(cart);
+            _unitOfWork.Complete();
 
             return CreatedAtAction(nameof(GetCartItem), new { customerId = cart.CustomerID, productId = cart.ProductID }, cart);
         }
@@ -111,18 +105,18 @@ namespace OrderService.Controllers
         [HttpDelete("{customerId}")]
         public async Task<IActionResult> DeleteCartItems(int customerId)
         {
-            if (_uniftOfWork.Cart == null)
+            if (_unitOfWork.Cart == null)
             {
                 return NotFound();
             }
-            var cart = _uniftOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
+            var cart = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
             if (cart == null)
             {
                 return NotFound();
             }
 
-            _uniftOfWork.Cart.DeleteAll(customerId);
-            _uniftOfWork.Complete();
+            _unitOfWork.Cart.DeleteAll(customerId);
+            _unitOfWork.Complete();
 
             return NoContent();
         }
@@ -131,18 +125,18 @@ namespace OrderService.Controllers
         [HttpDelete("{customerId}/{productId}")]
         public async Task<IActionResult> DeleteCartItem(int customerId, int productId)
         {
-            if (_uniftOfWork.Cart == null)
+            if (_unitOfWork.Cart == null)
             {
                 return NotFound();
             }
-            var cart = _uniftOfWork.Cart.FindCartItem(customerId, productId);
+            var cart = _unitOfWork.Cart.FindCartItem(customerId, productId);
             if (cart == null)
             {
                 return NotFound();
             }
 
-            _uniftOfWork.Cart.DeleteAll(customerId);
-            _uniftOfWork.Complete();
+            _unitOfWork.Cart.DeleteAll(customerId);
+            _unitOfWork.Complete();
 
             return NoContent();
         }
