@@ -13,6 +13,6 @@ namespace OrderService.Entities.Model
         public int ProductID { get; set; }
         public int Quantity { get; set; }
 
-        public bool ValidQuantity => Quantity >=Constants.ValidQuantity;
+        //public bool ValidQuantity => Quantity >=Constants.ValidQuantity;
     }
 }

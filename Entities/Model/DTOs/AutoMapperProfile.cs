@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using OrderService.Entities.Model.DTOs.RequestDTO;
 
 namespace OrderService.Entities.Model.DTOs
 {
@@ -6,7 +7,8 @@ namespace OrderService.Entities.Model.DTOs
     {
         public AutoMapperProfile()
         {
-            CreateMap<OrderAddDTO,Orders>();
+            //CreateMap<OrderAddDTO,Orders>();
+            CreateMap<CartAddDTO,Carts>();
         }
     }
 }

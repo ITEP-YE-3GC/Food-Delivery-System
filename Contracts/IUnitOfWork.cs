@@ -1,4 +1,5 @@
-﻿using OrderService.Repository;
+﻿using OrderService.Entities.Model;
+using OrderService.Repository;
 
 namespace OrderService.Contracts
 {
@@ -10,6 +11,8 @@ namespace OrderService.Contracts
         IOrderDetailsRepository OrderDetails { get; }
 
         ICartsRepository Carts { get; }
+
+        //IGenericRepository<Carts> Carts { get; }
         // add more 
         int Complete();
     }

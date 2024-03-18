@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderService.Contracts;
 using OrderService.Entities.Model;
+using OrderService.Entities.Model.DTOs.RequestDTO;
 
 namespace OrderService.Controllers
 {
@@ -12,12 +14,14 @@ namespace OrderService.Controllers
     {
         private readonly IUnitOfWork _uniftOfWork;
         private ILoggerManager _logger;
-        
+        private readonly IMapper _mapper;
 
-        public CartsController(IUnitOfWork unitOfWork, ILoggerManager logger)
+
+        public CartsController(IUnitOfWork unitOfWork, ILoggerManager logger, IMapper mapper)
         {
             _uniftOfWork = unitOfWork;
             _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: api/Carts
@@ -56,14 +60,17 @@ namespace OrderService.Controllers
         // PUT: api/Carts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCart(int id, Carts cart)
+        public async Task<IActionResult> PutCart(int id, CartAddDTO cart)
         {
-            if (id != cart.Seq)
+            
+            var existingCart = _uniftOfWork.Carts.GetById(id);
+
+            if (existingCart == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _uniftOfWork.Carts.Update(cart);
+            _mapper.Map(cart, existingCart);
 
             try
             {
@@ -87,16 +94,18 @@ namespace OrderService.Controllers
         // POST: api/Carts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Carts>> PostCarts(Carts cart)
+        public async Task<ActionResult<Carts>> PostCarts([FromBody] CartAddDTO cart)
         {
+           
             if (_uniftOfWork.Carts == null)
             {
                 return Problem("Entity set 'ApplicationContext.Carts'  is null.");
             }
-            _uniftOfWork.Carts.Create(cart);
+            var curr = _mapper.Map<Carts>(cart);
+            _uniftOfWork.Carts.Create(curr);
             _uniftOfWork.Complete();
 
-            return CreatedAtAction("GetCart", new { id = cart.Seq }, cart);
+            return CreatedAtAction("GetCart", new { id = curr.Seq }, curr);
         }
 
         // DELETE: api/Carts/5
