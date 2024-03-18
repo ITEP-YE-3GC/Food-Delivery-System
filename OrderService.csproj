@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Entities\Model\DTOs\RequestDTO\**" />
+    <Content Remove="Entities\Model\DTOs\RequestDTO\**" />
+    <EmbeddedResource Remove="Entities\Model\DTOs\RequestDTO\**" />
+    <None Remove="Entities\Model\DTOs\RequestDTO\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
@@ -24,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Entities\Model\DTOs\ResponseDTO\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
