@@ -1,5 +1,6 @@
 ﻿using OrderService.Contracts;
 using OrderService.Entities;
+using OrderService.Entities.Model;
 
 namespace OrderService.Repository
 {
@@ -9,6 +10,8 @@ namespace OrderService.Repository
         private IUserRepository _user;
         private IOrdersRepository _order;
         private IOrderDetailsRepository _orderDetails;
+        private ICartsRepository _carts;
+        
         public IUserRepository User
         {
             get
@@ -44,8 +47,17 @@ namespace OrderService.Repository
             }
         }
 
-
-
+        public ICartsRepository Carts
+        {
+            get
+            {
+                if (_carts == null)
+                {
+                    _carts = new CartsRepository(_context);
+                }
+                return _carts;
+            }
+        }
         public UnitOfWork(ApplicationContext context)
         {
             _context = context;
