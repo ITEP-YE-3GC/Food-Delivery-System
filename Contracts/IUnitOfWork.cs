@@ -8,6 +8,11 @@ namespace OrderService.Contracts
         IOrdersRepository Order { get; }
 
         IOrderDetailsRepository OrderDetails { get; }
+
+        ICartRepository Cart { get; }
+
+        //object Carts { get; }
+
         // add more 
         int Complete();
     }
