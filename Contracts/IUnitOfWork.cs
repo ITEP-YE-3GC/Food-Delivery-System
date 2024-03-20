@@ -11,9 +11,11 @@ namespace OrderService.Contracts
 
         ICartRepository Cart { get; }
 
-        //object Carts { get; }
-
         // add more 
         int Complete();
+
+        void BeginTransaction();
+        void Commit();
+        void Rollback();
     }
 }

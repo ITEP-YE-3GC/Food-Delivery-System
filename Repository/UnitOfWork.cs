@@ -83,7 +83,7 @@ namespace OrderService.Repository
 
         public void Rollback()
         {
-            if (_context != null)
+            if (_transaction != null)
             {
                 _transaction.Rollback();
                 _transaction.Dispose();
