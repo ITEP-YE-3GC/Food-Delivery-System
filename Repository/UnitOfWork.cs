@@ -1,4 +1,5 @@
-﻿using OrderService.Contracts;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using OrderService.Contracts;
 using OrderService.Entities;
 
 namespace OrderService.Repository
@@ -10,6 +11,9 @@ namespace OrderService.Repository
         private IOrdersRepository _order;
         private IOrderDetailsRepository _orderDetails;
         private ICartRepository _cartRepository;
+
+
+        private IDbContextTransaction _transaction;
 
         public IUserRepository User
         {
@@ -66,6 +70,26 @@ namespace OrderService.Repository
             _context = context;
 
         }
+
+        public void BeginTransaction()
+        {
+            _transaction = _context.Database.BeginTransaction();
+        }
+
+        public void Commit()
+        {
+            _transaction?.Commit();
+        }
+
+        public void Rollback()
+        {
+            if (_transaction != null)
+            {
+                _transaction.Rollback();
+                _transaction.Dispose();
+            }
+        }
+
         public int Complete()
         {
             return _context.SaveChanges();
