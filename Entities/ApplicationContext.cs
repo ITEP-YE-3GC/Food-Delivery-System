@@ -14,7 +14,7 @@ namespace OrderService.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Add composite key for cart:
-            modelBuilder.ApplyConfiguration(new CartsConfiguration());
+            modelBuilder.ApplyConfiguration(new CartsConfig());
 
             // Seeds data:
             modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());

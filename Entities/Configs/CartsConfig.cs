@@ -6,7 +6,7 @@ using System;
 
 namespace OrderService.Entities.Configs
 {
-    public class CartsConfiguration: IEntityTypeConfiguration<Cart>
+    public class CartsConfig: IEntityTypeConfiguration<Cart>
     {
         /// <summary>
         /// Create a Index for [CustomerID, ProductID]
@@ -14,7 +14,6 @@ namespace OrderService.Entities.Configs
         /// <param name="builder"></param>
         public void Configure(EntityTypeBuilder<Cart> builder)
         {
-            // builder.HasKey(c => new { c.CustomerID, c.ProductID });
             builder.HasIndex(p => new { p.CustomerID, p.ProductID });
         }
     }
