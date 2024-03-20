@@ -14,10 +14,15 @@ namespace OrderService.Repository
         {
         }
 
+        public bool CartItemExists(int customerId, int productId)
+        {
+            return FindCartItem(customerId, productId) != null;
+        }
+
         public Cart FindCartItem(int customerId, int productId)
         {
             var item = _applicationContext.Carts
-                        .FirstOrDefault(c => c.CustomerID == customerId && c.ProductID == productId);
+                            .FirstOrDefault(c => c.CustomerID == customerId && c.ProductID == productId);
 
             return item;
         }

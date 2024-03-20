@@ -6,3 +6,4 @@ global using OrderService.Controllers.Base;
 global using OrderService.Entities.Model;
 global using OrderService.Entities.Model.DTOs;
 global using OrderService.Exceptions.Error;
+global using System.Collections.Generic;

@@ -14,13 +14,14 @@ namespace OrderService.Entities.Model
         // Change class name from Carts => Cart
         // ============================
 
-        //[Key]
-        //[Column("Seq")]
-        //public long Seq { get; set; }
+        [Key]
+        public long SeqID { get; set; }
         public int CustomerID { get; set; }
         public int ProductID { get; set; }
         public int Quantity { get; set; }
 
-        public bool ValidQuantity => Quantity >=Constants.ValidQuantity;
+        public List<CartCustomization> CartCustomization { get; set; }
+
+        public bool ValidQuantity => Quantity >= Constants.ValidQuantity;
     }
 }

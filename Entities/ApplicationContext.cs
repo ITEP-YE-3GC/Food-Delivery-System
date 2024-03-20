@@ -33,6 +33,7 @@ namespace OrderService.Entities
         // ============================
 
         public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartCustomization> CartCustomizations { get; set; }
         public DbSet<OrderTracking> OrderTracking { get; set; }
 
         

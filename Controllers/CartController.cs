@@ -13,45 +13,41 @@ namespace OrderService.Controllers
             _logger = logger;
         }
 
-
-        /// <summary>
-        /// Get the cuctomer's cart
-        /// </summary>
-        /// <param name="customerId"></param>
-        /// <returns></returns>
         // GET: api/Cart/5
         [HttpGet("{customerId}")]
-        public async Task<ActionResult<User>> GetCart(int customerId)
+        public ActionResult<IEnumerable<Cart>> GetCart(int customerId)
         {
             if (_unitOfWork.Cart == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, "Cart entity is null."));
             }
+
             var cartItems = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
 
             if (cartItems == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} not found."));
             }
 
             return Ok(cartItems);
         }
 
+        // GET: api/Cart/5
         [HttpGet("{customerId}/{productId}")]
-        public async Task<ActionResult<Cart>> GetCartItem(int customerId, int productId)
-        {
+        public ActionResult<Cart> GetCartItem(int customerId, int productId)
+        { 
             if (_unitOfWork.Cart == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, "Cart enity is null."));
             }
             var item = _unitOfWork.Cart.FindCartItem(customerId, productId);
 
             if (item == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {productId} not found."));
             }
 
-            return item;
+            return Ok(item);
         }
 
         // PUT: api/Cart/5
@@ -60,59 +56,81 @@ namespace OrderService.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> PutCartItem(int customerId, int productId, [FromBody] CartDTO cart)
+        public ActionResult<Cart> PutCartItem(int customerId, [FromBody] CartDTO item)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(new ApiResponse(400, "Validation failed for the provided cart data."));
             }
 
-            var item = _unitOfWork.Cart.FindCartItem(customerId, productId);
-            if (item == null)
+            try
             {
-                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {productId} not found."));
+                if (!_unitOfWork.Cart.CartItemExists(customerId, item.ProductID))
+                {
+                    return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {item.ProductID} not found."));
+                }
+
+                var checkItem = _unitOfWork.Cart.FindCartItem(customerId, item.ProductID);
+                checkItem.Quantity = item.Quantity;
+
+                _unitOfWork.Cart.Update(checkItem);
+                _unitOfWork.Complete();
+
+                return Ok(checkItem); // Return the updated item in the response body
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _logger.LogError($"Concurrency error while updating cart's item for customer {customerId}: {ex.Message}");
+                return Conflict(new ApiResponse(409, "Concurrency error while updating cart's item. Please retry the operation."));
+            }
+        }
+
+
+        // POST: api/Cart
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
+        public ActionResult<Cart> PostCartItem([FromBody] Cart item)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ApiResponse(400, "Validation failed for the provided cart data."));
             }
 
             try
             {
+                if (_unitOfWork.Cart.CartItemExists(item.CustomerID, item.ProductID))
+                {
+                    return StatusCode(422, new ApiResponse(422, "This item already exists in your cart"));
+                }
+
+                _unitOfWork.Cart.Create(item);
                 _unitOfWork.Complete();
+
+                return CreatedAtAction(nameof(GetCartItem), new { customerId = item.CustomerID, productId = item.ProductID }, item);
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogError($"Concurrency error while updating cart item for customer {customerId} and product {productId}: {ex.Message}");
-                return Conflict(new ApiResponse(409, "A conflict occurred while updating the cart item. Please retry the operation."));
+                _logger.LogError($"Concurrency error while creating cart's item for customer {item.ProductID}: {ex.Message}");
+                return Conflict(new ApiResponse(409, "Concurrency error while creating cart's item. Please retry the operation."));
             }
-
-            return NoContent();
         }
 
-
-        // POST: api/Users
-        [HttpPost]
-        public async Task<ActionResult<Cart>> PostCartItem([FromBody] Cart cart)
-        {
-            if (_unitOfWork.Cart == null)
-            {
-                return Problem("Entity set 'ApplicationContext.Carts' is null.");
-            }
-            _unitOfWork.Cart.Create(cart);
-            _unitOfWork.Complete();
-
-            return CreatedAtAction(nameof(GetCartItem), new { customerId = cart.CustomerID, productId = cart.ProductID }, cart);
-        }
-
-        // DELETE: api/Users/5
+        // DELETE: api/Carts/5
         [HttpDelete("{customerId}")]
-        public async Task<IActionResult> DeleteCartItems(int customerId)
+        public IActionResult DeleteCartItems(int customerId)
         {
             if (_unitOfWork.Cart == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, "Cart entity is null."));
             }
+
             var cart = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
             if (cart == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} not found.")); ;
             }
 
             _unitOfWork.Cart.DeleteAll(customerId);
@@ -121,26 +139,26 @@ namespace OrderService.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Users/5
+        // DELETE: api/Carts/5
         [HttpDelete("{customerId}/{productId}")]
-        public async Task<IActionResult> DeleteCartItem(int customerId, int productId)
+        public IActionResult DeleteCartItem(int customerId, int productId)
         {
             if (_unitOfWork.Cart == null)
             {
-                return NotFound();
-            }
-            var cart = _unitOfWork.Cart.FindCartItem(customerId, productId);
-            if (cart == null)
-            {
-                return NotFound();
+                return NotFound(new ApiResponse(404, "Cart entity is null."));
             }
 
-            _unitOfWork.Cart.DeleteAll(customerId);
+            var cartItem = _unitOfWork.Cart.FindCartItem(customerId, productId);
+            if (cartItem == null)
+            {
+                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {productId} not found."));
+            }
+
+            _unitOfWork.Cart.Delete(cartItem);
             _unitOfWork.Complete();
 
             return NoContent();
         }
-
 
     }
 }
