@@ -2,10 +2,14 @@
 
 namespace OrderService.Entities.Model.DTOs
 {
-    public class CartDTO
+    public class CartUpdateDto
     {
+        public long CustomerID { get; set; }
         public int ProductID { get; set; }
+        public double Price { get; set; } = 0;
         public int Quantity { get; set; }
+
+        public List<CartCustomization>? CartCustomization { get; set; }
 
         public bool ValidQuantity => Quantity >= Constants.ValidQuantity;
     }

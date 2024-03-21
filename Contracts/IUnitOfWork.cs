@@ -10,6 +10,7 @@ namespace OrderService.Contracts
         IOrderDetailsRepository OrderDetails { get; }
 
         ICartRepository Cart { get; }
+        ICartCustomizationRepository CartCustomization { get; }
 
         // add more 
         int Complete();

@@ -13,8 +13,10 @@ namespace OrderService.Entities
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Add composite key for cart:
-            modelBuilder.ApplyConfiguration(new CartsConfiguration());
+            // Create index
+            modelBuilder.ApplyConfiguration(new CartConfig());
+            // Add composite key for CartCustomization:
+            modelBuilder.ApplyConfiguration(new CartCustomizationConfig());
 
             // Seeds data:
             modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
@@ -26,6 +28,8 @@ namespace OrderService.Entities
         public DbSet<OrderDetails> orderDetails { get; set; }
         public DbSet<OrderStatus> orderStatus { get; set; }
 
+        public DbSet<OrderTracking> OrderTracking { get; set; }
+
         // ============================
         // Change by: Anwar Hamzah
         // Change name to capital letter 
@@ -33,9 +37,8 @@ namespace OrderService.Entities
         // ============================
 
         public DbSet<Cart> Carts { get; set; }
-        public DbSet<OrderTracking> OrderTracking { get; set; }
+        public DbSet<CartCustomization> CartCustomizations { get; set; }
 
-        
 
     }
 }
