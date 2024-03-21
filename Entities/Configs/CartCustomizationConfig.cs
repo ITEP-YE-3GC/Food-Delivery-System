@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace OrderService.Entities.Configs
 {
@@ -10,7 +11,9 @@ namespace OrderService.Entities.Configs
         /// <param name="builder"></param>
         public void Configure(EntityTypeBuilder<CartCustomization> builder)
         {
-            builder.HasAlternateKey(c => new { c.SeqID, c.CustomizationID });
+            //builder.HasNoKey();
+
+            builder.HasKey(c => new { c.CartID, c.CustomizationID });
         }
     }
 }

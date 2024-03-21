@@ -7,6 +7,10 @@ namespace OrderService.Contracts
         T? GetById(long id);
         IEnumerable<T> GetAll();
         IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression);
+        T FindByCondition(Expression<Func<T, bool>> expression, string includes);
+        IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression, string[] includes = null);
+        IEnumerable<T> FindByCondition(Expression<Func<T, bool>>[] expressions, string[] includes = null);
+
         void Create(T entity);
         void Update(T entity);
         void Delete(T entity);

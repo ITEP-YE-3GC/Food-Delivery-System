@@ -1,4 +1,6 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
+
 namespace OrderService.Controllers
 {
     public class CartController : BaseController
@@ -15,14 +17,9 @@ namespace OrderService.Controllers
 
         // GET: api/Cart/5
         [HttpGet("{customerId}")]
-        public ActionResult<IEnumerable<Cart>> GetCart(int customerId)
+        public ActionResult<IEnumerable<Cart>> GetCart(long customerId)
         {
-            if (_unitOfWork.Cart == null)
-            {
-                return NotFound(new ApiResponse(404, "Cart entity is null."));
-            }
-
-            var cartItems = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
+            var cartItems = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId, new[] { "CartCustomization" });
 
             if (cartItems == null)
             {
@@ -33,30 +30,26 @@ namespace OrderService.Controllers
         }
 
         // GET: api/Cart/5
-        [HttpGet("{customerId}/{productId}")]
-        public ActionResult<Cart> GetCartItem(int customerId, int productId)
-        { 
-            if (_unitOfWork.Cart == null)
-            {
-                return NotFound(new ApiResponse(404, "Cart enity is null."));
-            }
-            var item = _unitOfWork.Cart.FindCartItem(customerId, productId);
+        [HttpGet("{cartId}")]
+        public ActionResult<Cart> GetCartItem(Guid cartId)
+        {
+            var item = _unitOfWork.Cart.FindByCondition(c => c.Id == cartId, "CartCustomization");
 
             if (item == null)
             {
-                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {productId} not found."));
+                return NotFound(new ApiResponse(404, $"Cart item for customer {cartId} not found."));
             }
 
             return Ok(item);
         }
 
-        // PUT: api/Cart/5
-        [HttpPut("{customerId}/{productId}")]
+        // PUT: api/Cart/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        [HttpPut("{cartId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
-        public ActionResult<Cart> PutCartItem(int customerId, [FromBody] CartDTO item)
+        public ActionResult<Cart> PutCartItem(Guid cartId, [FromBody] CartUpdateDto item)
         {
             if (!ModelState.IsValid)
             {
@@ -65,26 +58,51 @@ namespace OrderService.Controllers
 
             try
             {
-                if (!_unitOfWork.Cart.CartItemExists(customerId, item.ProductID))
+                var cartItem = _unitOfWork.Cart.FindByCondition(c => c.Id == cartId, "CartCustomization");
+                if (cartItem == null)
                 {
-                    return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {item.ProductID} not found."));
+                    return NotFound(new ApiResponse(404, $"Cart item for customer {item.CustomerID} and product {item.ProductID} not found."));
                 }
 
-                var checkItem = _unitOfWork.Cart.FindCartItem(customerId, item.ProductID);
-                checkItem.Quantity = item.Quantity;
+                // Update the main properties of the cart item
+                cartItem.Price = item.Price;
+                cartItem.Quantity = item.Quantity;
 
-                _unitOfWork.Cart.Update(checkItem);
+                _unitOfWork.BeginTransaction();
+                // Update the sub-details (CartCustomization)
+                if (item.CartCustomization != null)
+                {
+                    // Remove CartCustomization items that are not present in the updated data
+                    //cartItem.CartCustomization.RemoveAll(cc => !item.CartCustomization.Any(c => c.CustomizationID == cc.CustomizationID));
+
+                    if (cartItem.CartCustomization != null)
+                    {
+                        _unitOfWork.CartCustomization.DeleteAll(cartItem.Id);
+
+                        cartItem.CartCustomization.RemoveAll(c => c.CartID == cartId);
+                    }
+                    foreach (var customization in item.CartCustomization)
+                    {
+                        cartItem.CartCustomization.Add(customization);
+
+                    }
+                }
+
+                
+                _unitOfWork.Cart.Update(cartItem);
                 _unitOfWork.Complete();
+                _unitOfWork.Commit(); // Commit the transaction after successful update
 
-                return Ok(checkItem); // Return the updated item in the response body
+                return Ok(cartItem); // Return the updated item in the response body
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogError($"Concurrency error while updating cart's item for customer {customerId}: {ex.Message}");
+                _unitOfWork.Rollback(); // Rollback the transaction in case of concurrency exception
+                _logger.LogError($"Concurrency error while updating cart's item for customer {item.CustomerID}: {ex.Message}");
                 return Conflict(new ApiResponse(409, "Concurrency error while updating cart's item. Please retry the operation."));
             }
+            
         }
-
 
         // POST: api/Cart
         [HttpPost]
@@ -106,58 +124,83 @@ namespace OrderService.Controllers
                     return StatusCode(422, new ApiResponse(422, "This item already exists in your cart"));
                 }
 
+                _unitOfWork.BeginTransaction();
                 _unitOfWork.Cart.Create(item);
                 _unitOfWork.Complete();
+                _unitOfWork.Commit();
 
                 return CreatedAtAction(nameof(GetCartItem), new { customerId = item.CustomerID, productId = item.ProductID }, item);
             }
             catch (DbUpdateConcurrencyException ex)
             {
-                _logger.LogError($"Concurrency error while creating cart's item for customer {item.ProductID}: {ex.Message}");
+                _unitOfWork.Rollback();
+                _logger.LogError($"Concurrency error while creating cart's item for customer product {item.ProductID}, erroe: {ex.Message}");
                 return Conflict(new ApiResponse(409, "Concurrency error while creating cart's item. Please retry the operation."));
             }
         }
 
         // DELETE: api/Carts/5
         [HttpDelete("{customerId}")]
-        public IActionResult DeleteCartItems(int customerId)
+        public IActionResult DeleteCart(long customerId)
         {
-            if (_unitOfWork.Cart == null)
-            {
-                return NotFound(new ApiResponse(404, "Cart entity is null."));
-            }
-
             var cart = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
-            if (cart == null)
+            if (!cart.Any())
             {
                 return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} not found.")); ;
             }
 
-            _unitOfWork.Cart.DeleteAll(customerId);
-            _unitOfWork.Complete();
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                
+                foreach (var cartItem in cart)
+                {
+                    if (cartItem.CartCustomization != null)
+                    {
+                        _unitOfWork.CartCustomization.DeleteAll(cartItem.Id);
+                    }
+                }
 
-            return NoContent();
+                _unitOfWork.Cart.DeleteAll(customerId);
+                _unitOfWork.Complete();
+                _unitOfWork.Commit();
+
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _unitOfWork.Rollback();
+                _logger.LogError($"An error occurred while deleting the cart item. erroe : {ex.Message}");
+                return StatusCode(500, new ApiResponse(500, "An error occurred while processing your request."));
+            }
         }
 
-        // DELETE: api/Carts/5
-        [HttpDelete("{customerId}/{productId}")]
-        public IActionResult DeleteCartItem(int customerId, int productId)
+        // DELETE: api/Carts/3fa85f64-5717-4562-b3fc-2c963f66afa6
+        [HttpDelete("{cartId}")]
+        public IActionResult DeleteCartItem(Guid cartId)
         {
-            if (_unitOfWork.Cart == null)
-            {
-                return NotFound(new ApiResponse(404, "Cart entity is null."));
-            }
-
-            var cartItem = _unitOfWork.Cart.FindCartItem(customerId, productId);
+            var cartItem = _unitOfWork.Cart.FindCartItem(cartId);
             if (cartItem == null)
             {
-                return NotFound(new ApiResponse(404, $"Cart item for customer {customerId} and product {productId} not found."));
+                return NotFound(new ApiResponse(404, $"Cart item for customer with Cart ID{cartId} not found."));
             }
 
-            _unitOfWork.Cart.Delete(cartItem);
-            _unitOfWork.Complete();
+            try
+            {
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.CartCustomization.DeleteAll(cartId);
+                _unitOfWork.Cart.Delete(cartItem);
+                _unitOfWork.Complete();
+                _unitOfWork.Commit();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _unitOfWork.Rollback();
+                _logger.LogError($"An error occurred while deleting the cart item. erroe : {ex.Message}");
+                return StatusCode(500, new ApiResponse(500, "An error occurred while processing your request."));
+            }
         }
 
     }

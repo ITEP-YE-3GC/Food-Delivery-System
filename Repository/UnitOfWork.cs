@@ -11,6 +11,7 @@ namespace OrderService.Repository
         private IOrdersRepository _order;
         private IOrderDetailsRepository _orderDetails;
         private ICartRepository _cartRepository;
+        private ICartCustomizationRepository _cartCustomizationRepository;
 
 
         private IDbContextTransaction _transaction;
@@ -59,6 +60,18 @@ namespace OrderService.Repository
                     _cartRepository = new CartRepository(_context);
                 }
                 return _cartRepository;
+            }
+        }
+
+        public ICartCustomizationRepository CartCustomization
+        {
+            get
+            {
+                if (_cartCustomizationRepository == null)
+                {
+                    _cartCustomizationRepository = new CartCustomizationRepository(_context);
+                }
+                return _cartCustomizationRepository;
             }
         }
 

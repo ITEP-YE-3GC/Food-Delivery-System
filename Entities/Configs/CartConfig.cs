@@ -6,7 +6,7 @@ using System;
 
 namespace OrderService.Entities.Configs
 {
-    public class CartsConfig: IEntityTypeConfiguration<Cart>
+    public class CartConfig: IEntityTypeConfiguration<Cart>
     {
         /// <summary>
         /// Create a Index for [CustomerID, ProductID]

@@ -42,7 +42,7 @@ builder.Services.AddScoped<ILoggerManager, LoggerManager>();
 // Anwar
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddExceptionHandler<AppExceptionHandler>();
+//builder.Services.AddExceptionHandler<AppExceptionHandler>();
 // ========================
 
 
@@ -57,7 +57,7 @@ if (app.Environment.IsDevelopment())
 
 // ========================
 // Anwar
-app.UseExceptionHandler();
+//app.UseExceptionHandler();
 // ========================
 
 app.UseHttpsRedirection();
