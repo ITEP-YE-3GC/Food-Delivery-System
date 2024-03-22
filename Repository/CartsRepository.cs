@@ -10,6 +10,7 @@ namespace OrderService.Repository
         public CartsRepository(ApplicationContext applicationContext)
             : base(applicationContext)
         {
+
         }
     }
 }
