@@ -5,5 +5,6 @@ namespace OrderService.Contracts
     public interface ICartsRepository : IGenericRepository<Carts>
     {
 
+
     }
 }
