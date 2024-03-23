@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
+using OrderService.Entities.Model.DTOs;
 
 namespace OrderService.Controllers
 {
@@ -9,14 +10,15 @@ namespace OrderService.Controllers
         private ILoggerManager _logger;
         private readonly IMapper _mapper;
 
-        public CartController(IUnitOfWork uniftOfWork, ILoggerManager logger)
+        public CartController(IUnitOfWork unitOfWork, ILoggerManager logger, IMapper mapper)
         {
-            _unitOfWork = uniftOfWork;
+            _unitOfWork = unitOfWork;
             _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: api/Cart/5
-        [HttpGet("{customerId}")]
+        [HttpGet("customerId")]
         public ActionResult<IEnumerable<Cart>> GetCart(long customerId)
         {
             var cartItems = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId, new[] { "CartCustomization" });
@@ -30,7 +32,7 @@ namespace OrderService.Controllers
         }
 
         // GET: api/Cart/5
-        [HttpGet("{cartId}")]
+        [HttpGet("cartId")]
         public ActionResult<Cart> GetCartItem(Guid cartId)
         {
             var item = _unitOfWork.Cart.FindByCondition(c => c.Id == cartId, "CartCustomization");
@@ -44,7 +46,7 @@ namespace OrderService.Controllers
         }
 
         // PUT: api/Cart/3fa85f64-5717-4562-b3fc-2c963f66afa6
-        [HttpPut("{cartId}")]
+        [HttpPut("cartId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
@@ -110,7 +112,7 @@ namespace OrderService.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
-        public ActionResult<Cart> PostCartItem([FromBody] Cart item)
+        public ActionResult<Cart> PostCartItem([FromBody] CartAddDto item)
         {
             if (!ModelState.IsValid)
             {
@@ -124,12 +126,14 @@ namespace OrderService.Controllers
                     return StatusCode(422, new ApiResponse(422, "This item already exists in your cart"));
                 }
 
+                var cartItem = _mapper.Map<CartAddDto, Cart>(item);
+
                 _unitOfWork.BeginTransaction();
-                _unitOfWork.Cart.Create(item);
+                _unitOfWork.Cart.Create(cartItem);
                 _unitOfWork.Complete();
                 _unitOfWork.Commit();
 
-                return CreatedAtAction(nameof(GetCartItem), new { customerId = item.CustomerID, productId = item.ProductID }, item);
+                return CreatedAtAction(nameof(GetCartItem), new { cartId = cartItem.Id }, cartItem);
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -140,7 +144,7 @@ namespace OrderService.Controllers
         }
 
         // DELETE: api/Carts/5
-        [HttpDelete("{customerId}")]
+        [HttpDelete("customerId")]
         public IActionResult DeleteCart(long customerId)
         {
             var cart = _unitOfWork.Cart.FindByCondition(c => c.CustomerID == customerId);
@@ -176,7 +180,7 @@ namespace OrderService.Controllers
         }
 
         // DELETE: api/Carts/3fa85f64-5717-4562-b3fc-2c963f66afa6
-        [HttpDelete("{cartId}")]
+        [HttpDelete("cartId")]
         public IActionResult DeleteCartItem(Guid cartId)
         {
             var cartItem = _unitOfWork.Cart.FindCartItem(cartId);

@@ -7,19 +7,25 @@ namespace OrderService.Entities.Model.DTOs
     {
         public CartAutoMapper()
         {
-            CreateMap<Cart, CartAddDto>()
-            .ForMember(dest => dest.CustomerID, opt => opt.MapFrom(src => src.CustomerID))
-            .ForMember(dest => dest.ProductID, opt => opt.MapFrom(src => src.ProductID))
-            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-            .ForMember(dest => dest.CartCustomization, opt => opt.MapFrom(src => src.CartCustomization));
-            
-            CreateMap<CartAddDto, Cart>();
+            CreateMap<CartAddDto, Cart>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.CreateDate, opt => opt.Ignore()) 
+                .ForMember(dest => dest.CartCustomization, opt => opt.MapFrom(src => src.CartCustomization));
 
-            CreateMap<Cart, CartUpdateDto>()
-            .ForMember(dest => dest.ProductID, opt => opt.MapFrom(src => src.ProductID))
-            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity));
+            CreateMap<CartCustomizationAddDto, CartCustomization>()
+                .ForMember(dest => dest.CartID, opt => opt.Ignore()); // Ignore the CartID when mapping
 
-            CreateMap<CartUpdateDto, Cart>();
+            //CreateMap<Cart, CartAddDto>()
+            //    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+            CreateMap<CartUpdateDto, Cart>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                //.ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.CreateDate, opt => opt.Ignore())
+                .ForMember(dest => dest.CartCustomization, opt => opt.MapFrom(src => src.CartCustomization));
+
+            //CreateMap<CartUpdateDto, Cart>();
         }
     }
 
