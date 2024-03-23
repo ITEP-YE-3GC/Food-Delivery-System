@@ -5,9 +5,10 @@ namespace OrderService.Contracts
     public interface IUnitOfWork : IDisposable
     {
         IUserRepository User { get; }
-        IOrdersRepository Order { get; }
+        IOrderRepository Order { get; }
 
         IOrderDetailsRepository OrderDetails { get; }
+        IOrderCustomizationRepository OrderCustomization { get; }
 
         ICartRepository Cart { get; }
         ICartCustomizationRepository CartCustomization { get; }

@@ -8,7 +8,7 @@ namespace OrderService.Repository
     {
         private readonly ApplicationContext _context;
         private IUserRepository _user;
-        private IOrdersRepository _order;
+        private IOrderRepository _order;
         private IOrderDetailsRepository _orderDetails;
         private ICartRepository _cartRepository;
         private ICartCustomizationRepository _cartCustomizationRepository;
@@ -27,7 +27,7 @@ namespace OrderService.Repository
                 return _user;
             }
         }
-        public IOrdersRepository Order
+        public IOrderRepository Order
         {
             get
             {
