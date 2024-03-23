@@ -22,7 +22,8 @@ throw new InvalidOperationException("Connections string: OrderServiceCon was not
 /// ==========================
 /// Register AutoMapper
 /// ==========================
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+// builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.ConfigureAutoMapper();
 
 
 // Add services to the container.

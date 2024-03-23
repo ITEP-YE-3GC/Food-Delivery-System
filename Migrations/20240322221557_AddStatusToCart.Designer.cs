@@ -12,8 +12,8 @@ using OrderService.Entities;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240320180921_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240322221557_AddStatusToCart")]
+    partial class AddStatusToCart
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,14 +34,20 @@ namespace OrderService.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CustomerID")
-                        .HasColumnType("integer");
+                    b.Property<long>("CustomerID")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("ProductID")
                         .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -57,6 +63,9 @@ namespace OrderService.Migrations
 
                     b.Property<int>("CustomizationID")
                         .HasColumnType("integer");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");

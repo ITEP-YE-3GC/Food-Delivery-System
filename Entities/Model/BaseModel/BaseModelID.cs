@@ -8,6 +8,12 @@ namespace OrderService.Entities.Model.BaseEntity
         [Key]
         [DatabaseGenerated(databaseGeneratedOption: DatabaseGeneratedOption.Identity)]
         public T Id { get; set; }
-        public DateTime CreateDate { get; set; } = DateTime.Now;
+
+        private DateTime _createDate = DateTime.UtcNow;
+        public DateTime CreateDate
+        {
+            get { return _createDate; }
+            set { _createDate = value.ToUniversalTime(); }
+        }
     }
 }

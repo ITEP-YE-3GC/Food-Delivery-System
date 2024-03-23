@@ -19,8 +19,9 @@ namespace OrderService.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    CustomerID = table.Column<int>(type: "integer", nullable: false),
+                    CustomerID = table.Column<long>(type: "bigint", nullable: false),
                     ProductID = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
                     CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -100,6 +101,7 @@ namespace OrderService.Migrations
                 {
                     CartID = table.Column<Guid>(type: "uuid", nullable: false),
                     CustomizationID = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>

@@ -12,7 +12,7 @@ using OrderService.Entities;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240317051010_InitialCreate")]
+    [Migration("20240322050153_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,17 +25,20 @@ namespace OrderService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderService.Entities.Model.Carts", b =>
+            modelBuilder.Entity("OrderService.Entities.Model.Cart", b =>
                 {
-                    b.Property<long>("Seq")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("Seq");
+                        .HasColumnType("uuid");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Seq"));
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("CustomerID")
-                        .HasColumnType("integer");
+                    b.Property<long>("CustomerID")
+                        .HasColumnType("bigint");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("ProductID")
                         .HasColumnType("integer");
@@ -43,9 +46,30 @@ namespace OrderService.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.HasKey("Seq");
+                    b.HasKey("Id");
 
-                    b.ToTable("carts");
+                    b.HasIndex("CustomerID", "ProductID");
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("OrderService.Entities.Model.CartCustomization", b =>
+                {
+                    b.Property<Guid>("CartID")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("CustomizationID")
+                        .HasColumnType("integer");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CartID", "CustomizationID");
+
+                    b.ToTable("CartCustomizations");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
@@ -100,27 +124,27 @@ namespace OrderService.Migrations
                         new
                         {
                             StatusID = 1,
-                            Name = "Status 1"
+                            Name = "Submitted"
                         },
                         new
                         {
                             StatusID = 2,
-                            Name = "Status 2"
+                            Name = "Received"
                         },
                         new
                         {
                             StatusID = 3,
-                            Name = "Status 3"
+                            Name = " Picked up"
                         },
                         new
                         {
                             StatusID = 4,
-                            Name = "Status 4"
+                            Name = "Onway"
                         },
                         new
                         {
                             StatusID = 5,
-                            Name = "Status 5"
+                            Name = "Delivered"
                         });
                 });
 
@@ -214,11 +238,25 @@ namespace OrderService.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("OrderService.Entities.Model.CartCustomization", b =>
+                {
+                    b.HasOne("OrderService.Entities.Model.Cart", null)
+                        .WithMany("CartCustomization")
+                        .HasForeignKey("CartID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
                 {
                     b.HasOne("OrderService.Entities.Model.Orders", null)
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrdersOrderID");
+                });
+
+            modelBuilder.Entity("OrderService.Entities.Model.Cart", b =>
+                {
+                    b.Navigation("CartCustomization");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.Orders", b =>

@@ -1,5 +1,4 @@
-﻿using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Contracts
 {
     public interface ICartRepository : IGenericRepository<Cart>

@@ -9,5 +9,11 @@ namespace OrderService.Services
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
+
+        public static void ConfigureAutoMapper(this IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(CartAutoMapper));
+
+        }
     }
 }
