@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using OrderService.Contracts;
 using OrderService.Entities;
+using OrderService.Entities.Model;
 
 namespace OrderService.Repository
 {
@@ -8,8 +9,9 @@ namespace OrderService.Repository
     {
         private readonly ApplicationContext _context;
         private IUserRepository _user;
-        private IOrderRepository _order;
-        private IOrderDetailsRepository _orderDetails;
+        private IOrderRepository _orderRepository;
+        private IOrderDetailsRepository _orderDetailsRepository;
+        private IOrderCustomizationRepository _orderCustomizationRepository;
         private ICartRepository _cartRepository;
         private ICartCustomizationRepository _cartCustomizationRepository;
 
@@ -31,11 +33,11 @@ namespace OrderService.Repository
         {
             get
             {
-                if (_order == null)
+                if (_orderRepository == null)
                 {
-                    _order = new OrderRepository(_context);
+                    _orderRepository = new OrderRepository(_context);
                 }
-                return _order;
+                return _orderRepository;
             }
         }
 
@@ -43,11 +45,23 @@ namespace OrderService.Repository
         {
             get
             {
-                if (_orderDetails == null)
+                if (_orderDetailsRepository == null)
                 {
-                    _orderDetails = new OrderDetailsRepository(_context);
+                    _orderDetailsRepository = new OrderDetailsRepository(_context);
                 }
-                return _orderDetails;
+                return _orderDetailsRepository;
+            }
+        }
+
+        public IOrderCustomizationRepository OrderCustomization
+        {
+            get
+            {
+                if (_orderCustomizationRepository == null)
+                {
+                    _orderCustomizationRepository = new OrderCustomizationRepository(_context);
+                }
+                return _orderCustomizationRepository;
             }
         }
 
