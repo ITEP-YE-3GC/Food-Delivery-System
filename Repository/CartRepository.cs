@@ -1,9 +1,4 @@
-﻿using OrderService.Contracts;
-using OrderService.Entities.Model;
-using OrderService.Entities;
-using static OrderService.Utilities.Constants;
-using Microsoft.EntityFrameworkCore;
-
+﻿
 namespace OrderService.Repository
 {
     public class CartRepository : GenericRepository<Cart>, ICartRepository

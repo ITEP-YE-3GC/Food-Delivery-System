@@ -1,5 +1,4 @@
-﻿using OrderService.Entities;
-
+﻿
 namespace OrderService.Repository
 {
     public class CartCustomizationRepository : GenericRepository<CartCustomization>, ICartCustomizationRepository
