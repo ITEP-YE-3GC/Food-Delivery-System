@@ -13,7 +13,7 @@ namespace OrderService.Entities.Model
         public double Price { get; set; }
         public int Quantity { get; set; }
         public long OrderID { get; set; }
-        //public Orders? Order { get; set; }
+        //public Order? Order { get; set; }
 
         public bool ValidQuantity => Quantity >= Constants.ValidQuantity;
     }

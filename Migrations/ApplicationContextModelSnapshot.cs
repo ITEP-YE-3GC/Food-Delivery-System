@@ -173,7 +173,7 @@ namespace OrderService.Migrations
                     b.ToTable("OrderTracking");
                 });
 
-            modelBuilder.Entity("OrderService.Entities.Model.Orders", b =>
+            modelBuilder.Entity("OrderService.Entities.Model.Order", b =>
                 {
                     b.Property<long>("OrderID")
                         .HasColumnType("bigint")
@@ -249,7 +249,7 @@ namespace OrderService.Migrations
 
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
                 {
-                    b.HasOne("OrderService.Entities.Model.Orders", null)
+                    b.HasOne("OrderService.Entities.Model.Order", null)
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrdersOrderID");
                 });
@@ -259,7 +259,7 @@ namespace OrderService.Migrations
                     b.Navigation("CartCustomization");
                 });
 
-            modelBuilder.Entity("OrderService.Entities.Model.Orders", b =>
+            modelBuilder.Entity("OrderService.Entities.Model.Order", b =>
                 {
                     b.Navigation("OrderDetails");
                 });

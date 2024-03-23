@@ -4,7 +4,7 @@ using static OrderService.Utilities.Constants;
 namespace OrderService.Contracts
 {
     
-    public interface IOrdersRepository : IGenericRepository<Orders>
+    public interface IOrdersRepository : IGenericRepository<Order>
     {
        
     }

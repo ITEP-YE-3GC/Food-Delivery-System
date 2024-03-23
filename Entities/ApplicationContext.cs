@@ -24,7 +24,7 @@ namespace OrderService.Entities
         }
 
         public DbSet<User> users { get; set; }
-        public DbSet<Orders> orders { get; set; }
+        public DbSet<Order> orders { get; set; }
         public DbSet<OrderDetails> orderDetails { get; set; }
         public DbSet<OrderStatus> orderStatus { get; set; }
 

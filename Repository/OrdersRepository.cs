@@ -6,7 +6,7 @@ using static OrderService.Utilities.Constants;
 namespace OrderService.Repository
 {
     
-    public class OrdersRepository : GenericRepository<Orders>, IOrdersRepository
+    public class OrdersRepository : GenericRepository<Order>, IOrdersRepository
     {
         public OrdersRepository(ApplicationContext applicationContext)
             : base(applicationContext)

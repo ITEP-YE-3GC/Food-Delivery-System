@@ -19,9 +19,9 @@ namespace OrderService.Controllers
             _logger = logger;
         }
 
-        // GET: api/Orders
+        // GET: api/Order
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Orders>>> Getorders()
+        public async Task<ActionResult<IEnumerable<Order>>> Getorders()
         {
 
             if (_uniftOfWork.Order == null)
@@ -41,15 +41,15 @@ namespace OrderService.Controllers
                     order.OrderDetails.Add(orderDetail);
                 }
             }
-            _logger.LogInfo($"Returned  Orders from database.");
+            _logger.LogInfo($"Returned  Order from database.");
             return Ok(allOrders);
 
 
         }
 
-        // GET: api/Orders/5
+        // GET: api/Order/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Orders>> GetOrder(int id)
+        public async Task<ActionResult<Order>> GetOrder(int id)
         {
             if (_uniftOfWork.Order == null)
             {
@@ -65,10 +65,10 @@ namespace OrderService.Controllers
             return order;
         }
 
-        // PUT: api/Orders/5
+        // PUT: api/Order/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Orders order)
+        public async Task<IActionResult> PutOrder(int id, Order order)
         {
             if (id != order.OrderID)
             {
@@ -96,14 +96,14 @@ namespace OrderService.Controllers
             return NoContent();
         }
 
-        // POST: api/Orders
+        // POST: api/Order
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Orders>> PostOrder([FromBody]Orders order)
+        public async Task<ActionResult<Order>> PostOrder([FromBody]Order order)
         {
             if (_uniftOfWork.Order == null)
             {
-                return Problem("Entity set 'ApplicationContext.Orders'  is null.");
+                return Problem("Entity set 'ApplicationContext.Order'  is null.");
             }
             _uniftOfWork.Order.Create(order);
             _uniftOfWork.Complete();
@@ -112,7 +112,7 @@ namespace OrderService.Controllers
         }
 
 
-        // DELETE: api/Orders/5
+        // DELETE: api/Order/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {

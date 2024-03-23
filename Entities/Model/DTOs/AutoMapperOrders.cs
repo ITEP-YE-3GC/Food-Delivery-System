@@ -6,7 +6,7 @@ namespace OrderService.Entities.Model.DTOs
     {
         public AutoMapperOrders()
         {
-            CreateMap<OrderAddDTO,Orders>();
+            CreateMap<OrderAddDTO,Order>();
         }
     }
 }
