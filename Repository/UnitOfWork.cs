@@ -33,7 +33,7 @@ namespace OrderService.Repository
             {
                 if (_order == null)
                 {
-                    _order = new OrdersRepository(_context);
+                    _order = new OrderRepository(_context);
                 }
                 return _order;
             }
