@@ -14,14 +14,14 @@ namespace OrderService.Entities.Model
         public DateTime CreatedDate { get; set; }
         public DateTime OrderDate { get; set; }
 
-        public List<OrderCustomization>? OrderCustomization { get; set; }
-
         public int PaymentID { get; set; }
         //public Payments Payments { get; set; }
 
         public int OrderStatusID { get; set; }
         //public OrderStatus OrderStatus { get; set; }
         public List<OrderDetails> OrderDetails { get; set; }
+
+        public List<OrderCustomization>? OrderCustomization { get; set; }
 
         public Order()
         {
