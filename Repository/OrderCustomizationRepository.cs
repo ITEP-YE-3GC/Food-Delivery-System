@@ -1,13 +1,8 @@
-﻿using OrderService.Contracts;
-using OrderService.Entities.Model;
-using OrderService.Entities;
-
-namespace OrderService.Repository
+﻿namespace OrderService.Repository
 {
-    
-    public class OrderDetailsRepository : GenericRepository<OrderDetails>, IOrderDetailsRepository
+    public class OrderCustomizationRepository : GenericRepository<OrderCustomization>, IOrderCustomizationRepository
     {
-        public OrderDetailsRepository(ApplicationContext applicationContext)
+        public OrderCustomizationRepository(ApplicationContext applicationContext)
             : base(applicationContext)
         {
         }
@@ -19,12 +14,12 @@ namespace OrderService.Repository
         public void DeleteAll(Guid orderId)
         {
             // Retrieve the order items to be removed
-            var orderItems = _applicationContext.OrderDetails
+            var orderItems = _applicationContext.OrderCustomizations
                                 .Where(o => o.OrderID == orderId)
                                 .ToList();
 
             // Remove the retrieved items
-            _applicationContext.OrderDetails.RemoveRange(orderItems);
+            _applicationContext.OrderCustomizations.RemoveRange(orderItems);
         }
     }
 }
