@@ -1,4 +1,6 @@
-﻿namespace OrderService.Entities.Model
+﻿using OrderService.Utilities;
+
+namespace OrderService.Entities.Model
 {
     public class OrderCustomization
     {
