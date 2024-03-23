@@ -8,12 +8,12 @@ namespace OrderService.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdresController : ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IUnitOfWork _uniftOfWork;
         private ILoggerManager _logger;
 
-        public OrdresController(IUnitOfWork unitOfWork, ILoggerManager logger)
+        public OrderController(IUnitOfWork unitOfWork, ILoggerManager logger)
         {
             _uniftOfWork = unitOfWork;
             _logger = logger;
