@@ -13,6 +13,7 @@ namespace OrderService.Services
         public static void ConfigureAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(CartAutoMapper));
+            services.AddAutoMapper(typeof(OrderAutoMapper));
 
         }
     }
