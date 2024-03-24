@@ -34,6 +34,9 @@ namespace OrderService.Migrations
                     b.Property<long>("CustomerID")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CustomizationNote")
+                        .HasColumnType("text");
+
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
@@ -41,6 +44,9 @@ namespace OrderService.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RestaurantId")
                         .HasColumnType("integer");
 
                     b.Property<bool>("Status")
@@ -72,34 +78,65 @@ namespace OrderService.Migrations
                     b.ToTable("CartCustomizations");
                 });
 
+            modelBuilder.Entity("OrderService.Entities.Model.Order", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AddressID")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("CustomerID")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("DriverID")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("OrderStatusID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentID")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RestaurantID")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderStatusID");
+
+                    b.HasIndex("PaymentID");
+
+                    b.ToTable("Orders");
+                });
+
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
                 {
-                    b.Property<long>("Seq")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Seq"));
-
-                    b.Property<long>("OrderID")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrdersOrderID")
-                        .HasColumnType("bigint");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
+                    b.Property<Guid>("OrderID")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("ProductID")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CustomizationNote")
+                        .HasColumnType("text");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.HasKey("Seq");
+                    b.HasKey("OrderID", "ProductID");
 
-                    b.HasIndex("OrdersOrderID");
-
-                    b.ToTable("orderDetails");
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.OrderStatus", b =>
@@ -116,6 +153,9 @@ namespace OrderService.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
+                    b.Property<int>("SeqID")
+                        .HasColumnType("integer");
+
                     b.HasKey("StatusID");
 
                     b.ToTable("OrderStatus");
@@ -124,37 +164,42 @@ namespace OrderService.Migrations
                         new
                         {
                             StatusID = 1,
-                            Name = "Submitted"
+                            Name = "Submitted",
+                            SeqID = 1
                         },
                         new
                         {
                             StatusID = 2,
-                            Name = "Received"
+                            Name = "Received",
+                            SeqID = 2
                         },
                         new
                         {
                             StatusID = 3,
-                            Name = " Picked up"
+                            Name = " Picked up",
+                            SeqID = 3
                         },
                         new
                         {
                             StatusID = 4,
-                            Name = "Onway"
+                            Name = "Onway",
+                            SeqID = 4
                         },
                         new
                         {
                             StatusID = 5,
-                            Name = "Delivered"
+                            Name = "Delivered",
+                            SeqID = 5
                         });
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.OrderTracking", b =>
                 {
-                    b.Property<long>("Seq")
-                        .ValueGeneratedOnAdd()
+                    b.Property<long>("OrderID")
                         .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Seq"));
+                    b.Property<long>("OrderStatusID")
+                        .HasColumnType("bigint");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone");
@@ -162,47 +207,31 @@ namespace OrderService.Migrations
                     b.Property<bool>("IsDone")
                         .HasColumnType("boolean");
 
-                    b.Property<long>("OrderID")
+                    b.Property<long>("Seq")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("OrderStatusID")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Seq");
+                    b.HasKey("OrderID", "OrderStatusID");
 
                     b.ToTable("OrderTracking");
                 });
 
-            modelBuilder.Entity("OrderService.Entities.Model.Order", b =>
+            modelBuilder.Entity("OrderService.Entities.Model.Payment", b =>
                 {
-                    b.Property<long>("OrderID")
-                        .HasColumnType("bigint")
-                        .HasColumnName("OrderID");
-
-                    b.Property<int>("AddressID")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CustomerID")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DriverID")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("OrderDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("OrderStatusID")
-                        .HasColumnType("integer");
-
                     b.Property<int>("PaymentID")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("PaymentID");
 
-                    b.HasKey("OrderID");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PaymentID"));
 
-                    b.ToTable("orders");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("PaymentID");
+
+                    b.ToTable("Payment");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.User", b =>
@@ -235,7 +264,7 @@ namespace OrderService.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.CartCustomization", b =>
@@ -247,11 +276,32 @@ namespace OrderService.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("OrderService.Entities.Model.Order", b =>
+                {
+                    b.HasOne("OrderService.Entities.Model.OrderStatus", "OrderStatus")
+                        .WithMany()
+                        .HasForeignKey("OrderStatusID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("OrderService.Entities.Model.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderStatus");
+
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
                 {
                     b.HasOne("OrderService.Entities.Model.Order", null)
                         .WithMany("OrderDetails")
-                        .HasForeignKey("OrdersOrderID");
+                        .HasForeignKey("OrderID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.Cart", b =>

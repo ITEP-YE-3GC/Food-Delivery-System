@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace OrderService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitOderService : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,10 +19,13 @@ namespace OrderService.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    RestaurantId = table.Column<int>(type: "integer", nullable: false),
                     CustomerID = table.Column<long>(type: "bigint", nullable: false),
                     ProductID = table.Column<int>(type: "integer", nullable: false),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     Quantity = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<bool>(type: "boolean", nullable: false),
+                    CustomizationNote = table.Column<string>(type: "text", nullable: true),
                     CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -31,30 +34,13 @@ namespace OrderService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "orders",
-                columns: table => new
-                {
-                    OrderID = table.Column<long>(type: "bigint", nullable: false),
-                    CustomerID = table.Column<int>(type: "integer", nullable: false),
-                    DriverID = table.Column<int>(type: "integer", nullable: false),
-                    AddressID = table.Column<int>(type: "integer", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    OrderDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PaymentID = table.Column<int>(type: "integer", nullable: false),
-                    OrderStatusID = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_orders", x => x.OrderID);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OrderStatus",
                 columns: table => new
                 {
                     StatusID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false)
+                    Name = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    SeqID = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,20 +51,19 @@ namespace OrderService.Migrations
                 name: "OrderTracking",
                 columns: table => new
                 {
-                    Seq = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     OrderID = table.Column<long>(type: "bigint", nullable: false),
                     OrderStatusID = table.Column<long>(type: "bigint", nullable: false),
+                    Seq = table.Column<long>(type: "bigint", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     IsDone = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderTracking", x => x.Seq);
+                    table.PrimaryKey("PK_OrderTracking", x => new { x.OrderID, x.OrderStatusID });
                 });
 
             migrationBuilder.CreateTable(
-                name: "users",
+                name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -92,7 +77,7 @@ namespace OrderService.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,37 +101,61 @@ namespace OrderService.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "orderDetails",
+                name: "Orders",
                 columns: table => new
                 {
-                    Seq = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ProductID = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<double>(type: "double precision", nullable: false),
-                    Quantity = table.Column<int>(type: "integer", nullable: false),
-                    OrderID = table.Column<long>(type: "bigint", nullable: false),
-                    OrdersOrderID = table.Column<long>(type: "bigint", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    CustomerID = table.Column<long>(type: "bigint", nullable: false),
+                    RestaurantID = table.Column<int>(type: "integer", nullable: false),
+                    DriverID = table.Column<int>(type: "integer", nullable: false),
+                    AddressID = table.Column<int>(type: "integer", nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PaymentID = table.Column<int>(type: "integer", nullable: false),
+                    OrderStatusID = table.Column<int>(type: "integer", nullable: false),
+                    CreateDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_orderDetails", x => x.Seq);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_orderDetails_orders_OrdersOrderID",
-                        column: x => x.OrdersOrderID,
-                        principalTable: "orders",
-                        principalColumn: "OrderID");
+                        name: "FK_Orders_OrderStatus_OrderStatusID",
+                        column: x => x.OrderStatusID,
+                        principalTable: "OrderStatus",
+                        principalColumn: "StatusID",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderDetails",
+                columns: table => new
+                {
+                    OrderID = table.Column<Guid>(type: "uuid", nullable: false),
+                    ProductID = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
+                    CustomizationNote = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderDetails", x => new { x.OrderID, x.ProductID });
+                    table.ForeignKey(
+                        name: "FK_OrderDetails_Orders_OrderID",
+                        column: x => x.OrderID,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "OrderStatus",
-                columns: new[] { "StatusID", "Name" },
+                columns: new[] { "StatusID", "Name", "SeqID" },
                 values: new object[,]
                 {
-                    { 1, "Submitted" },
-                    { 2, "Received" },
-                    { 3, " Picked up" },
-                    { 4, "Onway" },
-                    { 5, "Delivered" }
+                    { 1, "Submitted", 1 },
+                    { 2, "Received", 2 },
+                    { 3, " Picked up", 3 },
+                    { 4, "Onway", 4 },
+                    { 5, "Delivered", 5 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -155,9 +164,9 @@ namespace OrderService.Migrations
                 columns: new[] { "CustomerID", "ProductID" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_orderDetails_OrdersOrderID",
-                table: "orderDetails",
-                column: "OrdersOrderID");
+                name: "IX_Orders_OrderStatusID",
+                table: "Orders",
+                column: "OrderStatusID");
         }
 
         /// <inheritdoc />
@@ -167,22 +176,22 @@ namespace OrderService.Migrations
                 name: "CartCustomizations");
 
             migrationBuilder.DropTable(
-                name: "orderDetails");
-
-            migrationBuilder.DropTable(
-                name: "OrderStatus");
+                name: "OrderDetails");
 
             migrationBuilder.DropTable(
                 name: "OrderTracking");
 
             migrationBuilder.DropTable(
-                name: "users");
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Carts");
 
             migrationBuilder.DropTable(
-                name: "orders");
+                name: "Orders");
+
+            migrationBuilder.DropTable(
+                name: "OrderStatus");
         }
     }
 }
