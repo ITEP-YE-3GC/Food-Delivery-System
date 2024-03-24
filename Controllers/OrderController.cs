@@ -1,18 +1,15 @@
 ﻿
 namespace OrderService.Controllers
 {
-
-    [Route("api/[controller]")]
-    [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly IUnitOfWork _uniftOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private ILoggerManager _logger;
         private readonly IMapper _mapper;
 
         public OrderController(IUnitOfWork unitOfWork, ILoggerManager logger, IMapper mapper)
         {
-            _uniftOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
             _logger = logger;
             _mapper = mapper;
         }
@@ -21,19 +18,18 @@ namespace OrderService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> Getorders()
         {
-
-            if (_uniftOfWork.Order == null)
+            if (_unitOfWork.Order == null)
             {
                 return NotFound();
             }
-            var allOrders = _uniftOfWork.Order.GetAll();
+            var allOrders = _unitOfWork.Order.GetAll();
 
             // Retrieve OrderDetails for each Order
             foreach (var order in allOrders)
             {
-                //order.OrderDetails = _uniftOfWork.OrderDetails.GetById(order.OrderID).ToList();
+                //order.OrderDetails = _unitOfWork.OrderDetails.GetById(order.OrderID).ToList();
                 order.OrderDetails = new List<OrderDetails>();
-                var orderDetail = _uniftOfWork.OrderDetails.GetById(order.OrderID);
+                var orderDetail = _unitOfWork.OrderDetails.GetById(order.OrderID);
                 if (orderDetail != null)
                 {
                     order.OrderDetails.Add(orderDetail);
@@ -49,11 +45,11 @@ namespace OrderService.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Order>> GetOrder(int id)
         {
-            if (_uniftOfWork.Order == null)
+            if (_unitOfWork.Order == null)
             {
                 return NotFound();
             }
-            var order = _uniftOfWork.Order.GetById(id);
+            var order = _unitOfWork.Order.GetById(id);
 
             if (order == null)
             {
@@ -73,11 +69,11 @@ namespace OrderService.Controllers
                 return BadRequest();
             }
 
-            _uniftOfWork.Order.Update(order);
+            _unitOfWork.Order.Update(order);
 
             try
             {
-                _uniftOfWork.Complete();
+                _unitOfWork.Complete();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -99,12 +95,12 @@ namespace OrderService.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder([FromBody]Order order)
         {
-            if (_uniftOfWork.Order == null)
+            if (_unitOfWork.Order == null)
             {
                 return Problem("Entity set 'ApplicationContext.Order'  is null.");
             }
-            _uniftOfWork.Order.Create(order);
-            _uniftOfWork.Complete();
+            _unitOfWork.Order.Create(order);
+            _unitOfWork.Complete();
 
             return CreatedAtAction("GetOrder", new { id = order.OrderID }, order);
         }
@@ -114,11 +110,11 @@ namespace OrderService.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
-            if (_uniftOfWork.Order == null)
+            if (_unitOfWork.Order == null)
             {
                 return NotFound();
             }
-            var order = _uniftOfWork.Order.GetById(id);
+            var order = _unitOfWork.Order.GetById(id);
             if (order == null)
             {
                 return NotFound();
@@ -127,24 +123,24 @@ namespace OrderService.Controllers
          
 
             // Delete associated OrderDetails
-            var orderDetails = _uniftOfWork.OrderDetails.GetById(id);
+            var orderDetails = _unitOfWork.OrderDetails.GetById(id);
             if (orderDetails != null)
             {
                 
-                    _uniftOfWork.OrderDetails.Delete(orderDetails);
+                    _unitOfWork.OrderDetails.Delete(orderDetails);
                 
             }
             
 
-            _uniftOfWork.Order.Delete(order);
-            _uniftOfWork.Complete();
+            _unitOfWork.Order.Delete(order);
+            _unitOfWork.Complete();
 
             return NoContent();
         }
 
         private bool OrderExists(int id)
         {
-            return (_uniftOfWork.Order.GetAll()?.Any(e => e.OrderID == id)).GetValueOrDefault();
+            return (_unitOfWork.Order.GetAll()?.Any(e => e.OrderID == id)).GetValueOrDefault();
         }
     }
 }
