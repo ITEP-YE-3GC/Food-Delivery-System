@@ -1,7 +1,4 @@
 ﻿
-using Microsoft.EntityFrameworkCore;
-using OrderService.Entities.Model.DTOs;
-
 namespace OrderService.Controllers
 {
     public class CartController : BaseController

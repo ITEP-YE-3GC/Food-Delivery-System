@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Contracts;
-using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Controllers
 {
 
@@ -12,11 +8,13 @@ namespace OrderService.Controllers
     {
         private readonly IUnitOfWork _uniftOfWork;
         private ILoggerManager _logger;
+        private readonly IMapper _mapper;
 
-        public OrderController(IUnitOfWork unitOfWork, ILoggerManager logger)
+        public OrderController(IUnitOfWork unitOfWork, ILoggerManager logger, IMapper mapper)
         {
             _uniftOfWork = unitOfWork;
             _logger = logger;
+            _mapper = mapper;
         }
 
         // GET: api/Order
