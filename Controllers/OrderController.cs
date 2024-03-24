@@ -47,32 +47,57 @@ namespace OrderService.Controllers
         // PUT: api/Order/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("orderId")]
-        public async Task<IActionResult> PutOrder(Guid orderId, Order order)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> PutOrder(Guid orderId, [FromBody] OrderUpdateDto order)
         {
-            if ( orderId != order.Id)
+            if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(new ApiResponse(400, "Validation failed for the provided order data."));
             }
-
-            _unitOfWork.Order.Update(order);
 
             try
             {
-                _unitOfWork.Complete();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderExists(id))
+                var orderResult = _unitOfWork.Order.FindByCondition(o => o.Id == orderId, "OrderDetails");
+                if (orderResult == null)
                 {
-                    return NotFound();
+                    return NotFound(new ApiResponse(404, $"Order {orderId} not found."));
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                // Update the main properties of the Order
+                orderResult.DriverID = order.DriverID;
+                orderResult.OrderStatusID = order.StatusID;
+                orderResult.PaymentID = order.PaymentID;
+                // Update the sub-details (CartCustomization)
+                if (order.OrderDetails != null)
+                {
+                    if (orderResult.OrderDetails != null)
+                    {
+                        _unitOfWork.OrderDetails.DeleteAll(orderResult.Id);
+
+                        orderResult.OrderDetails.RemoveAll(od => od.OrderID == orderId);
+                    }
+                    foreach (var detail in order.OrderDetails)
+                    {
+                        orderResult.OrderDetails.Add(detail);
+
+                    }
+                }
+
+                _unitOfWork.Order.Update(orderResult);
+                _unitOfWork.Complete();
+                _unitOfWork.Commit();
+
+                return Ok(orderResult);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _unitOfWork.Rollback();
+                _logger.LogError($"Concurrency error while updating order {orderId}: {ex.Message}");
+                return Conflict(new ApiResponse(409, "Concurrency error while updating order. Please retry the operation."));
+            }
         }
 
         // POST: api/Order
@@ -87,7 +112,7 @@ namespace OrderService.Controllers
             _unitOfWork.Order.Create(order);
             _unitOfWork.Complete();
 
-            return CreatedAtAction("GetOrder", new { id = order.OrderID }, order);
+            return CreatedAtAction("GetOrder", new { id = order.id }, order);
         }
 
 
