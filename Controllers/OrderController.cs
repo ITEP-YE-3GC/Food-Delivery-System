@@ -139,37 +139,37 @@ namespace OrderService.Controllers
         }
 
 
-        // DELETE: api/Order/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOrder(int id)
-        {
-            if (_unitOfWork.Order == null)
-            {
-                return NotFound();
-            }
-            var order = _unitOfWork.Order.GetById(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Order/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteOrder(int id)
+        //{
+        //    if (_unitOfWork.Order == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var order = _unitOfWork.Order.GetById(id);
+        //    if (order == null)
+        //    {
+        //        return NotFound();
+        //    }
 
          
 
-            // Delete associated OrderDetails
-            var orderDetails = _unitOfWork.OrderDetails.GetById(id);
-            if (orderDetails != null)
-            {
+        //    // Delete associated OrderDetails
+        //    var orderDetails = _unitOfWork.OrderDetails.GetById(id);
+        //    if (orderDetails != null)
+        //    {
                 
-                    _unitOfWork.OrderDetails.Delete(orderDetails);
+        //            _unitOfWork.OrderDetails.Delete(orderDetails);
                 
-            }
+        //    }
             
 
-            _unitOfWork.Order.Delete(order);
-            _unitOfWork.Complete();
+        //    _unitOfWork.Order.Delete(order);
+        //    _unitOfWork.Complete();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool OrderExists(Guid orderId)
         {
