@@ -15,11 +15,10 @@ namespace OrderService.Entities
         {
             // Create index
             modelBuilder.ApplyConfiguration(new CartConfig());
-            modelBuilder.ApplyConfiguration(new OrderConfig());
             // Add composite key for CartCustomization, OrderDetails, OrderCustomization:
             modelBuilder.ApplyConfiguration(new CartCustomizationConfig());
             modelBuilder.ApplyConfiguration(new OrderDetailsConfig());
-            modelBuilder.ApplyConfiguration(new OrderCustomizationConfig());
+            modelBuilder.ApplyConfiguration(new OrderTrackingConfig());
 
             // Seeds data:
             modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
@@ -29,7 +28,6 @@ namespace OrderService.Entities
         public DbSet<User> Users { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
-        public DbSet<OrderCustomization> OrderCustomizations { get; set; }
         public DbSet<OrderStatus> OrderStatuses { get; set; }
 
         public DbSet<OrderTracking> OrderTracking { get; set; }
