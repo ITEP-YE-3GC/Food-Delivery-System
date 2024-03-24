@@ -19,7 +19,7 @@ namespace OrderService.Repository
         }
         public UserRole GetUserRole(int id)
         {
-            User user = _applicationContext.users.Find(id);
+            User user = _applicationContext.Users.Find(id);
             return user.Role;
         }
     }

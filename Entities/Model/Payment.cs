@@ -1,12 +1,8 @@
 ﻿
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace OrderService.Entities.Model
 {
-    
-    [Table("Payments")]
-    public class Payments
+    public class Payment
     {
         [Key]
         [Column("PaymentID")]

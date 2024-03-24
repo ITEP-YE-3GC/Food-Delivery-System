@@ -12,7 +12,10 @@ namespace OrderService.Entities.Model
         public DateTime OrderDate { get; set; }
 
         public int PaymentID { get; set; }
+        public Payment Payment { get; set; }
         public int OrderStatusID { get; set; }
+        public OrderStatus OrderStatus { get; set; }
+
         public List<OrderDetails> OrderDetails { get; set; }
 
         public Order()
