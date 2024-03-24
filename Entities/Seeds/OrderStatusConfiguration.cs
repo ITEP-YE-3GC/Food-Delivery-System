@@ -10,13 +10,13 @@ namespace OrderService.Entities.Seeds
         {
             builder.HasData(
                 // Customer 
-                new OrderStatus { StatusID = 1, Name = "Submitted" },
+                new OrderStatus { StatusID = 1, Name = "Submitted", SeqID = 1 },
                 // Restaurant
-                new OrderStatus { StatusID = 2, Name = "Received" },
+                new OrderStatus { StatusID = 2, Name = "Received", SeqID = 2 },
                 // Courier / Driver
-                new OrderStatus { StatusID = 3, Name = " Picked up" },
-                new OrderStatus { StatusID = 4, Name = "Onway" },
-                new OrderStatus { StatusID = 5, Name = "Delivered" }
+                new OrderStatus { StatusID = 3, Name = " Picked up", SeqID = 3 },
+                new OrderStatus { StatusID = 4, Name = "Onway", SeqID = 4 },
+                new OrderStatus { StatusID = 5, Name = "Delivered", SeqID = 5 }
             );
         }
     }
