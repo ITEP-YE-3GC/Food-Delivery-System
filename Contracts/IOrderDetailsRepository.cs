@@ -1,10 +1,10 @@
-﻿using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Contracts
 {
     public interface IOrderDetailsRepository : IGenericRepository<OrderDetails>
     {
-
+        IEnumerable<OrderDetails> FindOrderItems(Guid orderId);
+        OrderDetails FindOrderItem(Guid orderId, int productId);
         /// <summary>
         /// Clear the customer order details
         /// </summary>

@@ -1,5 +1,4 @@
-﻿using OrderService.Repository;
-
+﻿
 namespace OrderService.Contracts
 {
     public interface IUnitOfWork : IDisposable
@@ -8,7 +7,6 @@ namespace OrderService.Contracts
         IOrderRepository Order { get; }
 
         IOrderDetailsRepository OrderDetails { get; }
-        IOrderCustomizationRepository OrderCustomization { get; }
 
         ICartRepository Cart { get; }
         ICartCustomizationRepository CartCustomization { get; }
