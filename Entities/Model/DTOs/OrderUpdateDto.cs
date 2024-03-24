@@ -11,6 +11,6 @@ namespace OrderService.Entities.Model.DTOs
         public int PaymentID { get; set; }
         public int StatusID { get; set; }
 
-        public List<OrderDetailsAddDto>? OrderDetails { get; set; }
+        public List<OrderDetails>? OrderDetails { get; set; }
     }
 }
