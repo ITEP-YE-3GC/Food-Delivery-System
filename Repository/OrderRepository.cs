@@ -9,30 +9,9 @@ namespace OrderService.Repository
         {
         }
 
-        public bool OrderItemExists(Guid orderId)
+        public bool OrderExists(Guid orderId)
         {
-            return FindOrderItem(orderId) != null;
-        }
-
-        public bool OrderItemExists(long customerId, int productId)
-        {
-            return FindOrderItem(customerId, productId) != null;
-        }
-
-        public Order FindOrderItem(Guid orderId)
-        {
-            var item = _applicationContext.Orders
-                            .Find(orderId);
-
-            return item;
-        }
-
-        public Order FindOrderItem(long customerId, int productId)
-        {
-            var item = _applicationContext.Orders
-                        .FirstOrDefault(o => o.CustomerID == customerId && o.OrderDetails.Select( od => od.ProductID).Contains(productId));
-
-            return item;
+            return _applicationContext.Orders.Find(orderId) != null;
         }
 
         /// <summary>

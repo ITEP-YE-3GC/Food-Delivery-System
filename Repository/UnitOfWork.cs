@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using OrderService.Contracts;
-using OrderService.Entities;
-using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Repository
 {
     public class UnitOfWork : IUnitOfWork
@@ -11,7 +7,6 @@ namespace OrderService.Repository
         private IUserRepository _user;
         private IOrderRepository _orderRepository;
         private IOrderDetailsRepository _orderDetailsRepository;
-        private IOrderCustomizationRepository _orderCustomizationRepository;
         private ICartRepository _cartRepository;
         private ICartCustomizationRepository _cartCustomizationRepository;
 
@@ -50,18 +45,6 @@ namespace OrderService.Repository
                     _orderDetailsRepository = new OrderDetailsRepository(_context);
                 }
                 return _orderDetailsRepository;
-            }
-        }
-
-        public IOrderCustomizationRepository OrderCustomization
-        {
-            get
-            {
-                if (_orderCustomizationRepository == null)
-                {
-                    _orderCustomizationRepository = new OrderCustomizationRepository(_context);
-                }
-                return _orderCustomizationRepository;
             }
         }
 
