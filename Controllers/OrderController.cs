@@ -1,4 +1,6 @@
 ﻿
+using OrderService.Entities.Model;
+
 namespace OrderService.Controllers
 {
     public class OrderController : ControllerBase
@@ -18,53 +20,36 @@ namespace OrderService.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Order>>> Getorders()
         {
-            if (_unitOfWork.Order == null)
-            {
-                return NotFound();
-            }
-            var allOrders = _unitOfWork.Order.GetAll();
+            var allOrders = _unitOfWork.Order.GetAll("OrderDetails");
 
-            // Retrieve OrderDetails for each Order
-            foreach (var order in allOrders)
+            if (allOrders == null)
             {
-                //order.OrderDetails = _unitOfWork.OrderDetails.GetById(order.OrderID).ToList();
-                order.OrderDetails = new List<OrderDetails>();
-                var orderDetail = _unitOfWork.OrderDetails.GetById(order.OrderID);
-                if (orderDetail != null)
-                {
-                    order.OrderDetails.Add(orderDetail);
-                }
+                return NotFound(new ApiResponse(404, $"No Orders has been found."));
             }
-            _logger.LogInfo($"Returned  Order from database.");
+
             return Ok(allOrders);
-
-
         }
 
         // GET: api/Order/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(int id)
+        [HttpGet("orderId")]
+        public async Task<ActionResult<Order>> GetOrder(Guid orderId)
         {
-            if (_unitOfWork.Order == null)
-            {
-                return NotFound();
-            }
-            var order = _unitOfWork.Order.GetById(id);
+            var order = _unitOfWork.Order.FindByCondition(o => o.Id == orderId, "OrderDetails");
 
             if (order == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404, $"Order {orderId} not found."));
             }
 
-            return order;
+            return Ok(order);
         }
 
         // PUT: api/Order/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, Order order)
+        [HttpPut("orderId")]
+        public async Task<IActionResult> PutOrder(Guid orderId, Order order)
         {
-            if (id != order.OrderID)
+            if ( orderId != order.Id)
             {
                 return BadRequest();
             }
