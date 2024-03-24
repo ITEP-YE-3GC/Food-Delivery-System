@@ -18,7 +18,7 @@ namespace OrderService.Controllers
 
         // GET: api/Order
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> Getorders()
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
         {
             var allOrders = _unitOfWork.Order.GetAll("OrderDetails");
 
@@ -103,16 +103,39 @@ namespace OrderService.Controllers
         // POST: api/Order
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Order>> PostOrder([FromBody]Order order)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<Order>> PostOrder([FromBody] OrderAddDto order)
         {
-            if (_unitOfWork.Order == null)
+            if (!ModelState.IsValid)
             {
-                return Problem("Entity set 'ApplicationContext.Order'  is null.");
+                return BadRequest(new ApiResponse(400, "Validation failed for the provided cart data."));
             }
-            _unitOfWork.Order.Create(order);
-            _unitOfWork.Complete();
 
-            return CreatedAtAction("GetOrder", new { id = order.id }, order);
+            try
+            {
+                //if (_unitOfWork.Order.OrderExists(order.CustomerID))
+                //{
+                //    return StatusCode(422, new ApiResponse(422, "This order already exists"));
+                //}
+
+                var orderResult = _mapper.Map<OrderAddDto, Order>(order);
+
+                _unitOfWork.BeginTransaction();
+                _unitOfWork.Order.Create(orderResult);
+                _unitOfWork.Complete();
+                _unitOfWork.Commit();
+
+                return CreatedAtAction(nameof(GetOrder), new { orderId = orderResult.Id }, orderResult);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                _unitOfWork.Rollback();
+                _logger.LogError($"Concurrency error while creating order for customer {order.CustomerID}, erroe: {ex.Message}");
+                return Conflict(new ApiResponse(409, "Concurrency error while creating order. Please retry the operation."));
+            }
         }
 
 
@@ -148,9 +171,9 @@ namespace OrderService.Controllers
             return NoContent();
         }
 
-        private bool OrderExists(int id)
+        private bool OrderExists(Guid orderId)
         {
-            return (_unitOfWork.Order.GetAll()?.Any(e => e.OrderID == id)).GetValueOrDefault();
+            return (_unitOfWork.Order.GetAll()?.Any(o => o.Id == orderId)).GetValueOrDefault();
         }
     }
 }
