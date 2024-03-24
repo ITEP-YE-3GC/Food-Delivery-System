@@ -9,5 +9,6 @@ global using OrderService.Entities.Model.BaseEntity;
 global using OrderService.Entities.Model.DTOs;
 global using OrderService.Exceptions.Error;
 global using OrderService.Utilities;
+global using System.ComponentModel;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;

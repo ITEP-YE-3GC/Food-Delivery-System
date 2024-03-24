@@ -1,8 +1,4 @@
-﻿using OrderService.Utilities;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-
+﻿
 namespace OrderService.Entities.Model.DTOs
 {
     public class OrderDetailsAddDto
@@ -13,7 +9,7 @@ namespace OrderService.Entities.Model.DTOs
         [Range(1, 1000, ErrorMessage = "Quantity must be 1 or greater.")]
         [DefaultValue(1)]
         public int Quantity { get; set; }
-
+        public string? CustomizationNote { get; set; }
         public bool ValidQuantity => Quantity >= Constants.ValidQuantity;
     }
 }
