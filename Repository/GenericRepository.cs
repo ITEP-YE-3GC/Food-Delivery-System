@@ -26,6 +26,18 @@ namespace OrderService.Repository
             //return _applicationContext.Set<T>().AsNoTracking();
         }
 
+        public IEnumerable<T> GetAll(string include)
+        {
+            IQueryable<T> query = _applicationContext.Set<T>();
+
+            if (!string.IsNullOrEmpty(include))
+            {
+                query = query.Include(include);
+            }
+
+            return query.ToList();
+        }
+
         public IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
             return _applicationContext.Set<T>().Where(expression);

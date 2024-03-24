@@ -6,6 +6,7 @@ namespace OrderService.Contracts
     {
         T? GetById(long id);
         IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(string include);
         IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression);
         T FindByCondition(Expression<Func<T, bool>> expression, string includes);
         IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression, string[] includes = null);
