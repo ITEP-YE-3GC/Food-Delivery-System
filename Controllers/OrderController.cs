@@ -1,9 +1,7 @@
 ﻿
-using OrderService.Entities.Model;
-
 namespace OrderService.Controllers
 {
-    public class OrderController : ControllerBase
+    public class OrderController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
         private ILoggerManager _logger;
@@ -18,7 +16,7 @@ namespace OrderService.Controllers
 
         // GET: api/Order
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public ActionResult<IEnumerable<Order>> GetOrder()
         {
             var allOrders = _unitOfWork.Order.GetAll("OrderDetails");
 
@@ -32,7 +30,7 @@ namespace OrderService.Controllers
 
         // GET: api/Order/5
         [HttpGet("orderId")]
-        public async Task<ActionResult<Order>> GetOrder(Guid orderId)
+        public ActionResult<Order> GetOrder(Guid orderId)
         {
             var order = _unitOfWork.Order.FindByCondition(o => o.Id == orderId, "OrderDetails");
 
@@ -67,9 +65,13 @@ namespace OrderService.Controllers
                 }
 
                 // Update the main properties of the Order
-                orderResult.DriverID = order.DriverID;
-                orderResult.OrderStatusID = order.StatusID;
-                orderResult.PaymentID = order.PaymentID;
+                orderResult.DriverID = IsZeroOrNull(order.DriverID) ? orderResult.DriverID : order.DriverID;
+                orderResult.OrderStatusID = IsZeroOrNull(order.StatusID) ? orderResult.OrderStatusID : order.StatusID;
+                orderResult.PaymentID = IsZeroOrNull(order.PaymentID) ? orderResult.PaymentID : order.PaymentID;
+                orderResult.CustomerID = IsZeroOrNull(order.CustomerID) ? orderResult.CustomerID : order.CustomerID;
+                orderResult.RestaurantID = IsZeroOrNull(order.RestaurantID) ? orderResult.RestaurantID : order.RestaurantID;
+
+                _unitOfWork.BeginTransaction();
                 // Update the sub-details (CartCustomization)
                 if (order.OrderDetails != null)
                 {
@@ -107,19 +109,15 @@ namespace OrderService.Controllers
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Order>> PostOrder([FromBody] OrderAddDto order)
+        public ActionResult<Order> PostOrder([FromBody] OrderAddDto order)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(new ApiResponse(400, "Validation failed for the provided cart data."));
+                return BadRequest(new ApiResponse(400, "Validation failed for the provided order data."));
             }
 
             try
             {
-                //if (_unitOfWork.Order.OrderExists(order.CustomerID))
-                //{
-                //    return StatusCode(422, new ApiResponse(422, "This order already exists"));
-                //}
 
                 var orderResult = _mapper.Map<OrderAddDto, Order>(order);
 
@@ -130,7 +128,7 @@ namespace OrderService.Controllers
 
                 return CreatedAtAction(nameof(GetOrder), new { orderId = orderResult.Id }, orderResult);
             }
-            catch (DbUpdateConcurrencyException ex)
+            catch (Exception ex)
             {
                 _unitOfWork.Rollback();
                 _logger.LogError($"Concurrency error while creating order for customer {order.CustomerID}, erroe: {ex.Message}");
@@ -138,38 +136,7 @@ namespace OrderService.Controllers
             }
         }
 
-
-        //// DELETE: api/Order/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteOrder(int id)
-        //{
-        //    if (_unitOfWork.Order == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    var order = _unitOfWork.Order.GetById(id);
-        //    if (order == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-         
-
-        //    // Delete associated OrderDetails
-        //    var orderDetails = _unitOfWork.OrderDetails.GetById(id);
-        //    if (orderDetails != null)
-        //    {
-                
-        //            _unitOfWork.OrderDetails.Delete(orderDetails);
-                
-        //    }
-            
-
-        //    _unitOfWork.Order.Delete(order);
-        //    _unitOfWork.Complete();
-
-        //    return NoContent();
-        //}
+        private Func<int?, bool> IsZeroOrNull = value => value?.Equals(0) ?? false;
 
         private bool OrderExists(Guid orderId)
         {
