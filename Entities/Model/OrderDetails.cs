@@ -1,5 +1,4 @@
 ﻿
-
 namespace OrderService.Entities.Model
 {
     public class OrderDetails
