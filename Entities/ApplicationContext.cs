@@ -22,6 +22,7 @@ namespace OrderService.Entities
 
             // Seeds data:
             modelBuilder.ApplyConfiguration(new OrderStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new PaymentsConfiguration());
             // Configure other entities and relationships if needed
         }
 

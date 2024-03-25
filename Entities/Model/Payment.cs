@@ -9,6 +9,6 @@ namespace OrderService.Entities.Model
         public int PaymentID { get; set; }
         [Required(ErrorMessage = "Name  is required")]
         [StringLength(10, ErrorMessage = "Name can't be longer than 10 characters")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 }
