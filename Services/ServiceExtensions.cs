@@ -1,6 +1,4 @@
-﻿using OrderService.Contracts;
-using OrderService.Repository;
-
+﻿
 namespace OrderService.Services
 {
     public static class ServiceExtensions

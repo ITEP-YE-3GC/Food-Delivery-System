@@ -1,7 +1,4 @@
-﻿using OrderService.Utilities;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
-
+﻿
 namespace OrderService.Entities.Model.DTOs
 {
     public class CartAddDto

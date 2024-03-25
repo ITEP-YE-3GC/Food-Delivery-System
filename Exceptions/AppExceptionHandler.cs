@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-
+﻿
 namespace OrderService.Exceptions
 {
     public class AppExceptionHandler : IExceptionHandler

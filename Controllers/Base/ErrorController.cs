@@ -1,7 +1,4 @@
 
-using Microsoft.AspNetCore.Mvc;
-using OrderService.Exceptions.Error;
-
 namespace OrderService.Controllers.Base
 {
     [Route("api/errors/{code}")]

@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Entities.Model;
-using System.Reflection.Emit;
-using System;
-
+﻿
 namespace OrderService.Entities.Configs
 {
     public class CartConfig: IEntityTypeConfiguration<Cart>

@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using System.Net.Sockets;
-
+﻿
 namespace OrderService.Entities.Model.DTOs
 {
     public partial class CartAutoMapper: Profile

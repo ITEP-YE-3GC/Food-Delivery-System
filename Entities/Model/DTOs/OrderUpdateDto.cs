@@ -1,5 +1,4 @@
-﻿using OrderService.Utilities;
-
+﻿
 namespace OrderService.Entities.Model.DTOs
 {
     public class OrderUpdateDto

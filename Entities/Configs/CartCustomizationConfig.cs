@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
+﻿
 namespace OrderService.Entities.Configs
 {
     public class CartCustomizationConfig : IEntityTypeConfiguration<CartCustomization>

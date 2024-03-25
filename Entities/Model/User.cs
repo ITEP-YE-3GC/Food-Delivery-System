@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using static OrderService.Utilities.Constants;
-
+﻿
 namespace OrderService.Entities.Model
 {
     public class User

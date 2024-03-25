@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-
+﻿
 namespace OrderService.Contracts
 {
     public interface IGenericRepository<T> where T: class

@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrderService.Entities.Configs;
-using OrderService.Entities.Model;
-using OrderService.Entities.Seeds;
-
+﻿
 namespace OrderService.Entities
 {
     public class ApplicationContext: DbContext

@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Entities.Seeds
 {
     public class OrderStatusConfiguration : IEntityTypeConfiguration<OrderStatus>

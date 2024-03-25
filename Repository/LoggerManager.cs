@@ -1,6 +1,4 @@
-﻿using OrderService.Contracts;
-using NLog;
-
+﻿
 namespace OrderService.Repository
 {
     public class LoggerManager : ILoggerManager

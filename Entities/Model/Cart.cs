@@ -1,8 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using OrderService.Utilities;
-using OrderService.Entities.Model.BaseEntity;
-
+﻿
 namespace OrderService.Entities.Model
 {
 
