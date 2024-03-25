@@ -68,7 +68,6 @@ namespace OrderService.Controllers
                 orderResult.DriverID = IsZeroOrNull(order.DriverID) ? orderResult.DriverID : order.DriverID;
                 orderResult.OrderStatusID = IsZeroOrNull(order.StatusID) ? orderResult.OrderStatusID : order.StatusID;
                 orderResult.PaymentID = IsZeroOrNull(order.PaymentID) ? orderResult.PaymentID : order.PaymentID;
-                orderResult.CustomerID = IsZeroOrNull(order.CustomerID) ? orderResult.CustomerID : order.CustomerID;
                 orderResult.RestaurantID = IsZeroOrNull(order.RestaurantID) ? orderResult.RestaurantID : order.RestaurantID;
 
                 _unitOfWork.BeginTransaction();
