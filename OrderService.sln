@@ -16,6 +16,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v0.1.0", "v0.1.0", "{3E219D
 		releases\v0.1.0\CHANGELOG = releases\v0.1.0\CHANGELOG
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "v0.5.0", "v0.5.0", "{3A422CC4-C762-48C2-8FFD-F80A608F6FDA}"
+	ProjectSection(SolutionItems) = preProject
+		releases\v0.5.0\CHANGELOG.md = releases\v0.5.0\CHANGELOG.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{716C9F85-0046-47FF-9210-F2111B8F1801} = {3DF268BA-D95C-4F5F-89B4-4241866049A3}
 		{3E219D5D-361E-4C29-BAA1-527C3B858C72} = {3AAFC55E-2A95-4345-8278-094AC4615784}
+		{3A422CC4-C762-48C2-8FFD-F80A608F6FDA} = {3AAFC55E-2A95-4345-8278-094AC4615784}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {877F1BB3-9769-4A30-B3C1-81D94974B5D9}
