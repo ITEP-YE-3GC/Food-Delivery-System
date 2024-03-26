@@ -5,7 +5,7 @@ namespace OrderService.Entities.Model
     {
         public long CustomerID { get; set; }
         public int RestaurantID { get; set; }
-        public int DriverID { get; set; }
+        public int DriverID { get; set; } = 0;
         public int AddressID { get; set; }
 
         [Required(ErrorMessage = "Created Date is required")]

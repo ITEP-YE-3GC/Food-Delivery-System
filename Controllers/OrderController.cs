@@ -67,25 +67,8 @@ namespace OrderService.Controllers
                 // Update the main properties of the Order
                 orderResult.DriverID = IsZeroOrNull(order.DriverID) ? orderResult.DriverID : order.DriverID;
                 orderResult.OrderStatusID = IsZeroOrNull(order.StatusID) ? orderResult.OrderStatusID : order.StatusID;
-                orderResult.PaymentID = IsZeroOrNull(order.PaymentID) ? orderResult.PaymentID : order.PaymentID;
-                orderResult.RestaurantID = IsZeroOrNull(order.RestaurantID) ? orderResult.RestaurantID : order.RestaurantID;
 
                 _unitOfWork.BeginTransaction();
-                // Update the sub-details (CartCustomization)
-                if (order.OrderDetails != null)
-                {
-                    if (orderResult.OrderDetails != null)
-                    {
-                        _unitOfWork.OrderDetails.DeleteAll(orderResult.Id);
-
-                        orderResult.OrderDetails.RemoveAll(od => od.OrderID == orderId);
-                    }
-                    foreach (var detail in order.OrderDetails)
-                    {
-                        orderResult.OrderDetails.Add(detail);
-
-                    }
-                }
 
                 _unitOfWork.Order.Update(orderResult);
                 _unitOfWork.Complete();
