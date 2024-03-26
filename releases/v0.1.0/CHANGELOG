@@ -1,0 +1,15 @@
+# v0.1.0
+
+## Features
+
+- Create Cart.
+- Add Items to Cart.
+- Update Cart Items.
+- Remove Cart Items.
+- Remove Cart.
+- Main Orders Functionality.
+
+## Bug fixes
+
+- Restructure Solution's Folders Layout.
+- Fix Unit Testing Project.

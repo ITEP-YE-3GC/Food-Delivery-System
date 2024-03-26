@@ -21,6 +21,9 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+![Rr]elease/*/CHANGELOG
+![Rr]eleases/*/CHANGELOG
+!CHANGELOG
 x64/
 x86/
 [Ww][Ii][Nn]32/
