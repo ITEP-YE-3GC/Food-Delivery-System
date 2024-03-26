@@ -119,10 +119,5 @@ namespace OrderService.Controllers
         }
 
         private Func<int?, bool> IsZeroOrNull = value => value?.Equals(0) ?? false;
-
-        private bool OrderExists(Guid orderId)
-        {
-            return (_unitOfWork.Order.GetAll()?.Any(o => o.Id == orderId)).GetValueOrDefault();
-        }
     }
 }
