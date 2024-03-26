@@ -148,12 +148,15 @@ namespace OrderService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StatusID"));
 
+                    b.Property<bool>("Automated")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
-                    b.Property<int>("SeqID")
+                    b.Property<int>("NextStep")
                         .HasColumnType("integer");
 
                     b.HasKey("StatusID");
@@ -164,32 +167,65 @@ namespace OrderService.Migrations
                         new
                         {
                             StatusID = 1,
-                            Name = "Submitted",
-                            SeqID = 1
+                            Automated = false,
+                            Name = "Cancelled",
+                            NextStep = 0
                         },
                         new
                         {
                             StatusID = 2,
-                            Name = "Received",
-                            SeqID = 2
+                            Automated = true,
+                            Name = "Halted",
+                            NextStep = 0
                         },
                         new
                         {
                             StatusID = 3,
-                            Name = " Picked up",
-                            SeqID = 3
+                            Automated = false,
+                            Name = "Obstcles",
+                            NextStep = 0
                         },
                         new
                         {
                             StatusID = 4,
-                            Name = "Onway",
-                            SeqID = 4
+                            Automated = false,
+                            Name = "Submitted",
+                            NextStep = 1
                         },
                         new
                         {
                             StatusID = 5,
+                            Automated = false,
+                            Name = "Received",
+                            NextStep = 2
+                        },
+                        new
+                        {
+                            StatusID = 6,
+                            Automated = false,
+                            Name = "Ready for Pick up",
+                            NextStep = 3
+                        },
+                        new
+                        {
+                            StatusID = 7,
+                            Automated = false,
+                            Name = "Picked up",
+                            NextStep = 4
+                        },
+                        new
+                        {
+                            StatusID = 8,
+                            Automated = false,
+                            Name = "On the way",
+                            NextStep = 5
+                        },
+                        new
+                        {
+                            StatusID = 9,
+                            Automated = false,
                             Name = "Delivered",
-                            SeqID = 5
+                            NextStep = 6
                         });
                 });
 

@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace OrderService.Migrations
 {
     /// <inheritdoc />
-    public partial class InitOderService : Migration
+    public partial class CloseSprint1_2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -39,8 +39,9 @@ namespace OrderService.Migrations
                 {
                     StatusID = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
-                    SeqID = table.Column<int>(type: "integer", nullable: false)
+                    Name = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    NextStep = table.Column<int>(type: "integer", nullable: false),
+                    Automated = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -60,6 +61,19 @@ namespace OrderService.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OrderTracking", x => new { x.OrderID, x.OrderStatusID });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payment",
+                columns: table => new
+                {
+                    PaymentID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payment", x => x.PaymentID);
                 });
 
             migrationBuilder.CreateTable(
@@ -123,6 +137,12 @@ namespace OrderService.Migrations
                         principalTable: "OrderStatus",
                         principalColumn: "StatusID",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Orders_Payment_PaymentID",
+                        column: x => x.PaymentID,
+                        principalTable: "Payment",
+                        principalColumn: "PaymentID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -148,15 +168,24 @@ namespace OrderService.Migrations
 
             migrationBuilder.InsertData(
                 table: "OrderStatus",
-                columns: new[] { "StatusID", "Name", "SeqID" },
+                columns: new[] { "StatusID", "Automated", "Name", "NextStep" },
                 values: new object[,]
                 {
-                    { 1, "Submitted", 1 },
-                    { 2, "Received", 2 },
-                    { 3, " Picked up", 3 },
-                    { 4, "Onway", 4 },
-                    { 5, "Delivered", 5 }
+                    { 1, false, "Cancelled", 0 },
+                    { 2, true, "Halted", 0 },
+                    { 3, false, "Obstcles", 0 },
+                    { 4, false, "Submitted", 1 },
+                    { 5, false, "Received", 2 },
+                    { 6, false, "Ready for Pick up", 3 },
+                    { 7, false, "Picked up", 4 },
+                    { 8, false, "On the way", 5 },
+                    { 9, false, "Delivered", 6 }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Payment",
+                columns: new[] { "PaymentID", "Name" },
+                values: new object[] { 1, "COD" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Carts_CustomerID_ProductID",
@@ -167,6 +196,11 @@ namespace OrderService.Migrations
                 name: "IX_Orders_OrderStatusID",
                 table: "Orders",
                 column: "OrderStatusID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PaymentID",
+                table: "Orders",
+                column: "PaymentID");
         }
 
         /// <inheritdoc />
@@ -192,6 +226,9 @@ namespace OrderService.Migrations
 
             migrationBuilder.DropTable(
                 name: "OrderStatus");
+
+            migrationBuilder.DropTable(
+                name: "Payment");
         }
     }
 }

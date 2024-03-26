@@ -12,8 +12,8 @@ using OrderService.Entities;
 namespace OrderService.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240324225117_InitOderService")]
-    partial class InitOderService
+    [Migration("20240326002416_CloseSprint1_2")]
+    partial class CloseSprint1_2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,6 +115,8 @@ namespace OrderService.Migrations
 
                     b.HasIndex("OrderStatusID");
 
+                    b.HasIndex("PaymentID");
+
                     b.ToTable("Orders");
                 });
 
@@ -149,12 +151,15 @@ namespace OrderService.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StatusID"));
 
+                    b.Property<bool>("Automated")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
-                    b.Property<int>("SeqID")
+                    b.Property<int>("NextStep")
                         .HasColumnType("integer");
 
                     b.HasKey("StatusID");
@@ -165,32 +170,65 @@ namespace OrderService.Migrations
                         new
                         {
                             StatusID = 1,
-                            Name = "Submitted",
-                            SeqID = 1
+                            Automated = false,
+                            Name = "Cancelled",
+                            NextStep = 0
                         },
                         new
                         {
                             StatusID = 2,
-                            Name = "Received",
-                            SeqID = 2
+                            Automated = true,
+                            Name = "Halted",
+                            NextStep = 0
                         },
                         new
                         {
                             StatusID = 3,
-                            Name = " Picked up",
-                            SeqID = 3
+                            Automated = false,
+                            Name = "Obstcles",
+                            NextStep = 0
                         },
                         new
                         {
                             StatusID = 4,
-                            Name = "Onway",
-                            SeqID = 4
+                            Automated = false,
+                            Name = "Submitted",
+                            NextStep = 1
                         },
                         new
                         {
                             StatusID = 5,
+                            Automated = false,
+                            Name = "Received",
+                            NextStep = 2
+                        },
+                        new
+                        {
+                            StatusID = 6,
+                            Automated = false,
+                            Name = "Ready for Pick up",
+                            NextStep = 3
+                        },
+                        new
+                        {
+                            StatusID = 7,
+                            Automated = false,
+                            Name = "Picked up",
+                            NextStep = 4
+                        },
+                        new
+                        {
+                            StatusID = 8,
+                            Automated = false,
+                            Name = "On the way",
+                            NextStep = 5
+                        },
+                        new
+                        {
+                            StatusID = 9,
+                            Automated = false,
                             Name = "Delivered",
-                            SeqID = 5
+                            NextStep = 6
                         });
                 });
 
@@ -214,6 +252,32 @@ namespace OrderService.Migrations
                     b.HasKey("OrderID", "OrderStatusID");
 
                     b.ToTable("OrderTracking");
+                });
+
+            modelBuilder.Entity("OrderService.Entities.Model.Payment", b =>
+                {
+                    b.Property<int>("PaymentID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("PaymentID");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PaymentID"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.HasKey("PaymentID");
+
+                    b.ToTable("Payment");
+
+                    b.HasData(
+                        new
+                        {
+                            PaymentID = 1,
+                            Name = "COD"
+                        });
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.User", b =>
@@ -266,7 +330,15 @@ namespace OrderService.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("OrderService.Entities.Model.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("OrderStatus");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("OrderService.Entities.Model.OrderDetails", b =>
