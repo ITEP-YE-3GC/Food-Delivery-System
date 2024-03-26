@@ -6,14 +6,21 @@ namespace OrderService.Entities.Seeds
         public void Configure(EntityTypeBuilder<OrderStatus> builder)
         {
             builder.HasData(
-                // Customer 
-                new OrderStatus { StatusID = 1, Name = "Submitted", SeqID = 1 },
+                // Customer / Restaurant
+                new OrderStatus { StatusID = 1, Name = "Cancelled" },
+                ///// These statuses are exceptional, all other statuses can change to them, and they can change to any status.
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////
+                new OrderStatus { StatusID = 2, Name = "Halted", Automated = true },
+                new OrderStatus { StatusID = 3, Name = "Obstcles" },
+                ////////////////////////////////////////////////////////////////////////////////////////////////
+                new OrderStatus { StatusID = 2, Name = "Submitted", NextStep = 1 },
                 // Restaurant
-                new OrderStatus { StatusID = 2, Name = "Received", SeqID = 2 },
+                new OrderStatus { StatusID = 3, Name = "Received", NextStep = 2 },
+                new OrderStatus { StatusID = 4, Name = "Ready for Pick up", NextStep = 3 },
                 // Courier / Driver
-                new OrderStatus { StatusID = 3, Name = " Picked up", SeqID = 3 },
-                new OrderStatus { StatusID = 4, Name = "Onway", SeqID = 4 },
-                new OrderStatus { StatusID = 5, Name = "Delivered", SeqID = 5 }
+                new OrderStatus { StatusID = 5, Name = "Picked up", NextStep = 4 },
+                new OrderStatus { StatusID = 6, Name = "On the way", NextStep = 5 },
+                new OrderStatus { StatusID = 7, Name = "Delivered", NextStep = 6 }
             );
         }
     }
