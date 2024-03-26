@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Contracts;
-using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Controllers
 {
    

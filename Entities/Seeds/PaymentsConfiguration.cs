@@ -1,16 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
-using OrderService.Entities.Model;
-
+﻿
 namespace OrderService.Entities.Seeds
 {
    
-    public class PaymentsConfiguration : IEntityTypeConfiguration<Payments>
+    public class PaymentsConfiguration : IEntityTypeConfiguration<Payment>
     {
-        public void Configure(EntityTypeBuilder<Payments> builder)
+        public void Configure(EntityTypeBuilder<Payment> builder)
         {
             builder.HasData(
-                new Payments { PaymentID = 1, Name = "COD" }
+                new Payment { PaymentID = 1, Name = "COD" }
             );
         }
     }

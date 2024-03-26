@@ -1,8 +1,4 @@
-﻿using OrderService.Contracts;
-using OrderService.Entities;
-using OrderService.Entities.Model;
-using static OrderService.Utilities.Constants;
-
+﻿
 namespace OrderService.Repository
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
@@ -19,7 +15,7 @@ namespace OrderService.Repository
         }
         public UserRole GetUserRole(int id)
         {
-            User user = _applicationContext.users.Find(id);
+            User user = _applicationContext.Users.Find(id);
             return user.Role;
         }
     }

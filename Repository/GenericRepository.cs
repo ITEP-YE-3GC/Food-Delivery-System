@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrderService.Contracts;
-using OrderService.Entities;
-using System.Linq.Expressions;
-
+﻿
 namespace OrderService.Repository
 {
     
@@ -25,10 +21,69 @@ namespace OrderService.Repository
             //return _applicationContext.Set<T>().AsNoTracking();
         }
 
+        public IEnumerable<T> GetAll(string include)
+        {
+            IQueryable<T> query = _applicationContext.Set<T>();
+
+            if (!string.IsNullOrEmpty(include))
+            {
+                query = query.Include(include);
+            }
+
+            return query.ToList();
+        }
+
         public IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression)
         {
             return _applicationContext.Set<T>().Where(expression);
             //return _applicationContext.Set<T>().Where(expression).AsNoTracking();
+        }
+
+        public T FindByCondition(Expression<Func<T, bool>> expression, string include)
+        {
+            IQueryable<T> query = _applicationContext.Set<T>();
+
+            if (!string.IsNullOrWhiteSpace(include))
+            {
+                query = query.Include(include);
+            }
+
+            return query.FirstOrDefault(expression);
+        }
+
+        public IEnumerable<T> FindByCondition(Expression<Func<T, bool>> expression, string[] includes = null)
+        {
+            IQueryable<T> query = _applicationContext.Set<T>();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return query.Where(expression).ToList();
+        }
+
+        public IEnumerable<T> FindByCondition(Expression<Func<T, bool>>[] expressions, string[] includes = null)
+        {
+            IQueryable<T> query = _applicationContext.Set<T>();
+
+            foreach (var expression in expressions)
+            {
+                query = query.Where(expression);
+            }
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return query.ToList();
         }
 
         public void Create(T entity)
@@ -44,9 +99,6 @@ namespace OrderService.Repository
             _applicationContext.Set<T>().Remove(entity);
         }
 
-      
-
-      
     }
 
    
