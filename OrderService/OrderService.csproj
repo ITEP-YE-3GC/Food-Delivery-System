@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Version>0.1.0</Version>
     <FileVersion>0.1.0</FileVersion>
+    <UserSecretsId>463b6c95-1abf-46ff-a752-93fa7711f493</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

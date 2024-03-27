@@ -1,4 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Data.SqlClient;
+
 namespace OrderService.Controllers
 {
     public class CartController : BaseController
@@ -6,8 +9,10 @@ namespace OrderService.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private ILoggerManager _logger;
         private readonly IMapper _mapper;
+       
 
         public CartController(IUnitOfWork unitOfWork, ILoggerManager logger, IMapper mapper)
+
         {
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -87,7 +92,7 @@ namespace OrderService.Controllers
                     }
                 }
 
-                
+
                 _unitOfWork.Cart.Update(cartItem);
                 _unitOfWork.Complete();
                 _unitOfWork.Commit(); // Commit the transaction after successful update
@@ -100,7 +105,7 @@ namespace OrderService.Controllers
                 _logger.LogError($"Concurrency error while updating cart's item for customer {item.CustomerID}: {ex.Message}");
                 return Conflict(new ApiResponse(409, "Concurrency error while updating cart's item. Please retry the operation."));
             }
-            
+
         }
 
         // POST: api/Cart
@@ -153,7 +158,7 @@ namespace OrderService.Controllers
             try
             {
                 _unitOfWork.BeginTransaction();
-                
+
                 foreach (var cartItem in cart)
                 {
                     if (cartItem.CartCustomization != null)
@@ -203,6 +208,22 @@ namespace OrderService.Controllers
                 return StatusCode(500, new ApiResponse(500, "An error occurred while processing your request."));
             }
         }
+
+       
+        // GET: api/Cart/5
+        [HttpGet("AddressId")]
+        public ActionResult<IEnumerable<Order>> GetAddress(int addressId)
+        {
+            var AddressId = _unitOfWork.Order.FindByCondition(c => c.AddressID == addressId, new[] { "" });
+
+            if (AddressId == null)
+            {
+                return NotFound(new ApiResponse(404, $"Address Id {AddressId} not found."));
+            }
+
+            return Ok(AddressId);
+        }
+       
 
     }
 }
